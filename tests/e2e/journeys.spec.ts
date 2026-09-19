@@ -259,7 +259,9 @@ test("NGO uploads mapped aggregate, worker persists it, reviews card, grants and
     })
     .toBe(404);
   await donor.reload();
-  await expect(donor.getByRole("alert")).toBeVisible();
+  const denied = donor.getByRole("main").getByRole("alert");
+  await expect(denied).toBeVisible();
+  await expect(denied).toContainText("Not found.");
   await donorContext.close();
   const jobs = await stored(page, "jobs/");
   expect(

@@ -1,0 +1,28 @@
+{
+  "discoveryPositions": [
+    {
+      "width": 1440,
+      "firstResultTop": 549.46875
+    },
+    {
+      "width": 390,
+      "firstResultTop": 794.484375
+    }
+  ],
+  "printed": [
+    {
+      "title": "View all planning inputs and candidate constraints",
+      "open": true
+    },
+    {
+      "title": "Sources & provenance (7)",
+      "open": true
+    },
+    {
+      "title": "Complete report data and technical details",
+      "open": true
+    }
+  ],
+  "errors": [],
+  "viewport": "320 CSS px is the reflow equivalent of a 1280px viewport at 400% zoom; supplementary screenshot also enlarges root text to 200%."
+}

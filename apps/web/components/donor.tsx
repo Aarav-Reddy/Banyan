@@ -229,6 +229,36 @@ export function Discovery() {
           ))}
         </div>
       </div>
+      {selected.length > 0 && (
+        <div className="selection-bar">
+          <span>
+            <strong>{selected.length}</strong> of 4 selected
+          </span>
+          {selected.length >= 2 ? (
+            <Link
+              className="button secondary"
+              href={`/compare?ids=${selected.join(",")}`}
+            >
+              Compare organizations
+            </Link>
+          ) : (
+            <span>Select one more to compare</span>
+          )}
+          <Link
+            className="button primary"
+            href={`/allocate?ids=${selected.join(",")}`}
+          >
+            Plan funding
+          </Link>
+          <button
+            type="button"
+            className="text-button"
+            onClick={() => setSelected([])}
+          >
+            Clear selection
+          </button>
+        </div>
+      )}
       <State data={data} error={error}>
         {data && data.length === 0 ? (
           <Empty title="No organizations match these filters">
@@ -468,36 +498,6 @@ export function Discovery() {
         unknown, not financial resilience; absent reporting is not
         ineffectiveness. No universal risk or impact ranking is applied.
       </Notice>
-      {selected.length > 0 && (
-        <div className="selection-bar">
-          <span>
-            <strong>{selected.length}</strong> of 4 selected
-          </span>
-          {selected.length >= 2 ? (
-            <Link
-              className="button secondary"
-              href={`/compare?ids=${selected.join(",")}`}
-            >
-              Compare organizations
-            </Link>
-          ) : (
-            <span>Select one more to compare</span>
-          )}
-          <Link
-            className="button primary"
-            href={`/allocate?ids=${selected.join(",")}`}
-          >
-            Plan funding
-          </Link>
-          <button
-            type="button"
-            className="text-button"
-            onClick={() => setSelected([])}
-          >
-            Clear selection
-          </button>
-        </div>
-      )}
     </>
   );
 }

@@ -12,7 +12,27 @@ test.beforeEach(async ({ context }) => {
   });
 });
 async function login(page: Page, username: string) {
-  await page.goto("/login");
+  // Reuse the sign-in form after sign-out; extra full reloads needlessly consume
+  // the real anonymous request allowance while checking six roles in sequence.
+  if (!(await page.getByLabel("Username", { exact: true }).isVisible())) {
+    const sessionResponse = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === "/api/v1/session/" &&
+        response.request().method() === "GET",
+    );
+    await page.goto("/login");
+    const response = await sessionResponse;
+    if (response.status() === 429) {
+      // Respect the server's actual rate limit; do not disable or bypass it.
+      const retrySeconds = Number(response.headers()["retry-after"]);
+      expect(retrySeconds).toBeGreaterThan(0);
+      expect(retrySeconds).toBeLessThanOrEqual(60);
+      await page.waitForTimeout(retrySeconds * 1000 + 100);
+      await page.reload();
+    } else {
+      expect(response.ok()).toBeTruthy();
+    }
+  }
   await page.getByLabel("Username", { exact: true }).fill(username);
   await page
     .getByLabel("Password", { exact: true })
@@ -64,6 +84,21 @@ test("advanced filters stay mounted, retain values, and submit the original exac
   await login(page, "foundation-admin");
   await page.goto("/discover");
   await expect(page.locator(".org-card").first()).toBeVisible();
+  await page.locator(".org-card input[type=checkbox]").first().check();
+  const selection = page.locator(".selection-bar");
+  await expect(selection.getByText("Select one more to compare")).toBeVisible();
+  expect(
+    await selection.evaluate(
+      (element) =>
+        !!(
+          element.compareDocumentPosition(
+            document.querySelector(".discovery-grid")!,
+          ) & Node.DOCUMENT_POSITION_FOLLOWING
+        ),
+    ),
+  ).toBe(true);
+  await selection.getByRole("button", { name: "Clear selection" }).click();
+  await expect(selection).toHaveCount(0);
   const advanced = page.locator("details.advanced-filters");
   await advanced.locator("summary").click();
   await page
