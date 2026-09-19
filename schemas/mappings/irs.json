@@ -1,0 +1,10 @@
+{
+  "namespace": "http://www.irs.gov/efile",
+  "versions": {
+    "2022": "2022v5.0",
+    "2023": "2023v5.1",
+    "2024": "2024v5.0"
+  },
+  "definition": "Executable field map in philanthra.ingestion.sources.IRS_FIELDS; provenance locators are emitted per field.",
+  "source_kind": "schema_documentation"
+}

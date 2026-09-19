@@ -1,0 +1,7268 @@
+{
+  "components": {
+    "schemas": {
+      "Alert": {
+        "properties": {
+          "adoption_note": {
+            "type": "string"
+          },
+          "artifact_id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string"
+          },
+          "feedback": {
+            "maxLength": 30,
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "state": {
+            "maxLength": 20,
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 240,
+            "type": "string"
+          }
+        },
+        "required": [
+          "artifact_id",
+          "created_at",
+          "explanation",
+          "id",
+          "title"
+        ],
+        "type": "object"
+      },
+      "AlertDetailViewPatchResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "AlertsViewGetResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Alert"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "AllocationCandidate": {
+        "properties": {
+          "assumption_note": {
+            "type": "string"
+          },
+          "cap_cents": {
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "excluded": {
+            "type": "boolean"
+          },
+          "minimum_cents": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "organization_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "weight": {
+            "format": "decimal",
+            "pattern": "^-?\\d{0,8}(?:\\.\\d{0,4})?$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "organization_id"
+        ],
+        "type": "object"
+      },
+      "AllocationEdit": {
+        "properties": {
+          "amount_cents": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "organization_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "amount_cents",
+          "organization_id"
+        ],
+        "type": "object"
+      },
+      "AnalysesViewGetResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Artifact"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "AnalysesViewPostResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Artifact"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "AnalysesViewRequest": {
+        "properties": {
+          "cause": {
+            "type": "string"
+          },
+          "geography": {
+            "type": "string"
+          },
+          "observation_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "observation_ids"
+        ],
+        "type": "object"
+      },
+      "AnalysisCandidatesViewGetResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "Artifact": {
+        "properties": {
+          "attributions": {
+            "items": {
+              "additionalProperties": {},
+              "type": "object"
+            },
+            "readOnly": true,
+            "type": "array"
+          },
+          "cause": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "geography": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "kind": {
+            "maxLength": 30,
+            "type": "string"
+          },
+          "method_version": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "owner_id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "payload": {},
+          "policy_version": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "purpose": {
+            "maxLength": 30,
+            "type": "string"
+          },
+          "review": {
+            "additionalProperties": {},
+            "nullable": true,
+            "readOnly": true,
+            "type": "object"
+          },
+          "revision": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "source_kind": {
+            "maxLength": 24,
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/Source"
+            },
+            "readOnly": true,
+            "type": "array"
+          },
+          "status": {
+            "maxLength": 30,
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 240,
+            "type": "string"
+          }
+        },
+        "required": [
+          "attributions",
+          "created_at",
+          "id",
+          "kind",
+          "owner_id",
+          "review",
+          "sources",
+          "title"
+        ],
+        "type": "object"
+      },
+      "AudienceEnum": {
+        "description": "* `workspace` - workspace\n* `public` - public",
+        "enum": [
+          "workspace",
+          "public"
+        ],
+        "type": "string"
+      },
+      "AuditViewGetResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "BenchmarkViewGetEnvelope": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PilotBenchmark"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "BookmarksViewGetEnvelope": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/PilotBookmark"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "BookmarksViewPostEnvelope": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PilotBookmarkCreated"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "BookmarksViewPostRequest": {
+        "properties": {
+          "artifact_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "artifact_id"
+        ],
+        "type": "object"
+      },
+      "Card": {
+        "properties": {
+          "attributions": {
+            "items": {
+              "additionalProperties": {},
+              "type": "object"
+            },
+            "readOnly": true,
+            "type": "array"
+          },
+          "card": {
+            "additionalProperties": {},
+            "readOnly": true,
+            "type": "object"
+          },
+          "cause": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "geography": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "kind": {
+            "maxLength": 30,
+            "type": "string"
+          },
+          "method_version": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "owner_id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "payload": {},
+          "policy_version": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "purpose": {
+            "maxLength": 30,
+            "type": "string"
+          },
+          "review": {
+            "additionalProperties": {},
+            "nullable": true,
+            "readOnly": true,
+            "type": "object"
+          },
+          "revision": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "source_kind": {
+            "maxLength": 24,
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/Source"
+            },
+            "readOnly": true,
+            "type": "array"
+          },
+          "status": {
+            "maxLength": 30,
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 240,
+            "type": "string"
+          }
+        },
+        "required": [
+          "attributions",
+          "card",
+          "created_at",
+          "id",
+          "kind",
+          "owner_id",
+          "review",
+          "sources",
+          "title"
+        ],
+        "type": "object"
+      },
+      "CardDetailViewGetResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Card"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "CardDetailViewPatchResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Card"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "CardsViewGetResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Card"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "CardsViewPostResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Card"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "CardsViewRequest": {
+        "properties": {
+          "attribution": {
+            "type": "string"
+          },
+          "barriers": {
+            "type": "string"
+          },
+          "caveats": {
+            "type": "string"
+          },
+          "claims": {
+            "items": {
+              "additionalProperties": {},
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "evidence_label": {
+            "type": "string"
+          },
+          "failures": {
+            "type": "string"
+          },
+          "implementation_steps": {
+            "type": "string"
+          },
+          "program_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "study_design": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "evidence_label",
+          "program_id",
+          "title"
+        ],
+        "type": "object"
+      },
+      "ClaimOrganization": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object"
+      },
+      "CompareViewGetResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ContactViewGetEnvelope": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PilotContactConsent"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ContactViewPutEnvelope": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PilotContactConsent"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ContactViewPutRequest": {
+        "properties": {
+          "email": {
+            "format": "email",
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "email",
+          "enabled",
+          "name",
+          "revision"
+        ],
+        "type": "object"
+      },
+      "CurrentUser": {
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "username"
+        ],
+        "type": "object"
+      },
+      "DashboardViewGetResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "DecisionEnum": {
+        "description": "* `approved` - approved\n* `rejected` - rejected\n* `changes_requested` - changes_requested\n* `withdrawn` - withdrawn",
+        "enum": [
+          "approved",
+          "rejected",
+          "changes_requested",
+          "withdrawn"
+        ],
+        "type": "string"
+      },
+      "Filing": {
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "amended": {
+            "type": "boolean"
+          },
+          "assets": {
+            "format": "decimal",
+            "nullable": true,
+            "pattern": "^-?\\d{0,18}(?:\\.\\d{0,2})?$",
+            "type": "string"
+          },
+          "cash": {
+            "format": "decimal",
+            "nullable": true,
+            "pattern": "^-?\\d{0,18}(?:\\.\\d{0,2})?$",
+            "type": "string"
+          },
+          "caveats": {},
+          "currency": {
+            "maxLength": 3,
+            "type": "string"
+          },
+          "expenses": {
+            "format": "decimal",
+            "nullable": true,
+            "pattern": "^-?\\d{0,18}(?:\\.\\d{0,2})?$",
+            "type": "string"
+          },
+          "form": {
+            "maxLength": 10,
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "liabilities": {
+            "format": "decimal",
+            "nullable": true,
+            "pattern": "^-?\\d{0,18}(?:\\.\\d{0,2})?$",
+            "type": "string"
+          },
+          "period_end": {
+            "format": "date",
+            "type": "string"
+          },
+          "period_start": {
+            "format": "date",
+            "type": "string"
+          },
+          "program_expenses": {
+            "format": "decimal",
+            "nullable": true,
+            "pattern": "^-?\\d{0,18}(?:\\.\\d{0,2})?$",
+            "type": "string"
+          },
+          "revenue": {
+            "format": "decimal",
+            "nullable": true,
+            "pattern": "^-?\\d{0,18}(?:\\.\\d{0,2})?$",
+            "type": "string"
+          },
+          "revision": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "source": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Source"
+              }
+            ],
+            "readOnly": true
+          },
+          "tax_year": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "period_end",
+          "period_start",
+          "source",
+          "tax_year"
+        ],
+        "type": "object"
+      },
+      "GeographyViewGetResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "Grant": {
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "attribution": {
+            "maxLength": 240,
+            "type": "string"
+          },
+          "audience": {
+            "maxLength": 20,
+            "type": "string"
+          },
+          "cause": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "external_processing": {
+            "type": "boolean"
+          },
+          "geography": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "purpose": {
+            "maxLength": 30,
+            "type": "string"
+          },
+          "recipient": {
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          },
+          "revision": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "source": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "cause",
+          "created_at",
+          "geography",
+          "id",
+          "purpose",
+          "source",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "GrantsViewGetResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Grant"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "GrantsViewPostResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Grant"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "GrantsViewRequest": {
+        "properties": {
+          "attribution": {
+            "type": "string"
+          },
+          "audience": {
+            "$ref": "#/components/schemas/AudienceEnum"
+          },
+          "cause": {
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "external_processing": {
+            "type": "boolean"
+          },
+          "geography": {
+            "type": "string"
+          },
+          "purpose": {
+            "$ref": "#/components/schemas/PurposeEnum"
+          },
+          "recipient_id": {
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          },
+          "source_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "audience",
+          "cause",
+          "geography",
+          "purpose",
+          "source_id"
+        ],
+        "type": "object"
+      },
+      "GraphViewGetResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "IdentityClaimsViewGetEnvelope": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/PilotIdentityClaim"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "IdentityClaimsViewPostEnvelope": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PilotIdentityClaim"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "IdentityClaimsViewPostRequest": {
+        "properties": {
+          "organization_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "proof_source_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "statement": {
+            "maxLength": 4000,
+            "minLength": 20,
+            "type": "string"
+          }
+        },
+        "required": [
+          "organization_id",
+          "proof_source_id",
+          "statement"
+        ],
+        "type": "object"
+      },
+      "IdentityProofViewGetEnvelope": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PilotIdentityProof"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ImpactReportViewGetEnvelope": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PilotImpactReport"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "Import": {
+        "properties": {
+          "checksum": {
+            "maxLength": 64,
+            "type": "string"
+          },
+          "columns": {},
+          "created_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "diagnostics": {},
+          "filename": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "format": {
+            "maxLength": 20,
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "mapping": {},
+          "preview": {},
+          "program_id": {
+            "format": "uuid",
+            "nullable": true,
+            "readOnly": true,
+            "type": "string"
+          },
+          "source_id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "status": {
+            "maxLength": 30,
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "checksum",
+          "created_at",
+          "filename",
+          "format",
+          "id",
+          "program_id",
+          "source_id",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "ImportCommitViewPostResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ImportDetailViewGetResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Import"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ImportDetailViewPatchResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Import"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ImportRejectedViewGetResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ImportTemplateViewGetResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ImportsViewGetResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Import"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ImportsViewPostResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Import"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ImportsViewRequest": {
+        "properties": {
+          "file": {
+            "format": "uri",
+            "type": "string"
+          },
+          "mapping": {}
+        },
+        "required": [
+          "file"
+        ],
+        "type": "object"
+      },
+      "IntroductionContactViewGetEnvelope": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PilotIntroductionContact"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "IntroductionDecisionViewPostEnvelope": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PilotIntroductionDecision"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "IntroductionDecisionViewPostRequest": {
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/StateEnum"
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "type": "object"
+      },
+      "IntroductionInboxViewGetEnvelope": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/PilotIntroduction"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "InvitationsViewPostResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "InvitationsViewRequest": {
+        "properties": {
+          "email": {
+            "format": "email",
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/RoleEnum"
+          }
+        },
+        "required": [
+          "email",
+          "role"
+        ],
+        "type": "object"
+      },
+      "Job": {
+        "properties": {
+          "attempts": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "available_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "error_code": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "kind": {
+            "maxLength": 40,
+            "type": "string"
+          },
+          "max_attempts": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "state": {
+            "maxLength": 30,
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "available_at",
+          "created_at",
+          "id",
+          "kind",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "JobDetailViewGetResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Job"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "JobsViewGetResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Job"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "LoginViewPostResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SessionData"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "LoginViewRequest": {
+        "properties": {
+          "password": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "password",
+          "username"
+        ],
+        "type": "object"
+      },
+      "LogoutViewPostResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "MembersViewGetResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "MembersViewPatchResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "MetricsViewGetResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "MetricsViewPatchResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "MetricsViewPostResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "MetricsViewRequest": {
+        "properties": {
+          "collection_method": {
+            "type": "string"
+          },
+          "denominator": {
+            "format": "decimal",
+            "nullable": true,
+            "pattern": "^-?\\d{0,16}(?:\\.\\d{0,4})?$",
+            "type": "string"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "period_end": {
+            "format": "date",
+            "type": "string"
+          },
+          "period_start": {
+            "format": "date",
+            "type": "string"
+          },
+          "value": {
+            "format": "decimal",
+            "pattern": "^-?\\d{0,16}(?:\\.\\d{0,4})?$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "collection_method",
+          "metric",
+          "period_end",
+          "period_start",
+          "value"
+        ],
+        "type": "object"
+      },
+      "MonitorViewPostEnvelope": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PilotMonitorJob"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "Observation": {
+        "properties": {
+          "cohort_id": {
+            "maxLength": 100,
+            "type": "string"
+          },
+          "comparator": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "denominator": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "followup_months": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "independent": {
+            "type": "boolean"
+          },
+          "locator": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "missingness": {
+            "maxLength": 240,
+            "type": "string"
+          },
+          "numerator": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "organization_id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "outcome": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "outcome_definition": {
+            "readOnly": true,
+            "type": "string"
+          },
+          "owner": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "period_end": {
+            "format": "date",
+            "type": "string"
+          },
+          "period_start": {
+            "format": "date",
+            "type": "string"
+          },
+          "program": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "source": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "stratum": {
+            "maxLength": 100,
+            "type": "string"
+          },
+          "study_design": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "study_id": {
+            "maxLength": 100,
+            "type": "string"
+          },
+          "uncertainty": {
+            "maxLength": 240,
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "cohort_id",
+          "created_at",
+          "id",
+          "organization_id",
+          "outcome",
+          "outcome_definition",
+          "owner",
+          "period_end",
+          "period_start",
+          "program",
+          "source",
+          "study_id",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "ObservationsViewGetResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Observation"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "OpportunitiesViewGetResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "Organization": {
+        "properties": {
+          "capacity_cents": {
+            "format": "int64",
+            "maximum": 9223372036854775807,
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "capacity_note": {
+            "type": "string"
+          },
+          "cause": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "country": {
+            "maxLength": 2,
+            "type": "string"
+          },
+          "headquarters_zip": {
+            "maxLength": 12,
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "latest_filing": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Filing"
+              }
+            ],
+            "nullable": true,
+            "readOnly": true
+          },
+          "mission": {
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "population": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "service_areas": {
+            "items": {
+              "additionalProperties": {},
+              "type": "object"
+            },
+            "readOnly": true,
+            "type": "array"
+          },
+          "source_kind": {
+            "maxLength": 24,
+            "type": "string"
+          },
+          "status": {
+            "maxLength": 80,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "latest_filing",
+          "name",
+          "service_areas"
+        ],
+        "type": "object"
+      },
+      "OrganizationDetail": {
+        "properties": {
+          "cards": {
+            "items": {
+              "$ref": "#/components/schemas/Card"
+            },
+            "type": "array"
+          },
+          "filings": {
+            "items": {
+              "$ref": "#/components/schemas/Filing"
+            },
+            "type": "array"
+          },
+          "financial_signals": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "organization": {
+            "$ref": "#/components/schemas/Organization"
+          },
+          "programs": {
+            "items": {
+              "$ref": "#/components/schemas/Program"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "cards",
+          "filings",
+          "financial_signals",
+          "organization",
+          "programs"
+        ],
+        "type": "object"
+      },
+      "OrganizationDetailViewGetResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/OrganizationDetail"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "OrganizationsViewGetResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Organization"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "PasswordResetConfirmViewPostEnvelope": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ResetComplete"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "PasswordResetConfirmViewPostRequest": {
+        "properties": {
+          "password": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "token": {
+            "type": "string"
+          },
+          "uid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "password",
+          "token",
+          "uid"
+        ],
+        "type": "object"
+      },
+      "PasswordResetRequestViewPostEnvelope": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ResetAccepted"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "PasswordResetRequestViewPostRequest": {
+        "properties": {
+          "email": {
+            "format": "email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "type": "object"
+      },
+      "PatchedAlertDetailViewPatchRequest": {
+        "properties": {
+          "adoption_note": {
+            "type": "string"
+          },
+          "feedback": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PatchedCardDetailViewPatchRequest": {
+        "properties": {
+          "attribution": {
+            "type": "string"
+          },
+          "barriers": {
+            "type": "string"
+          },
+          "caveats": {
+            "type": "string"
+          },
+          "failures": {
+            "type": "string"
+          },
+          "implementation_steps": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PatchedImportDetailViewPatchRequest": {
+        "properties": {
+          "mapping": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "PatchedMembersViewPatchRequest": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PatchedMetricsViewPatchRequest": {
+        "properties": {
+          "opted_in": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "PatchedPortfolioDetailViewPatchRequest": {
+        "properties": {
+          "allocations": {
+            "items": {
+              "$ref": "#/components/schemas/AllocationEdit"
+            },
+            "type": "array"
+          },
+          "revision": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PatchedProfileViewPatchRequest": {
+        "properties": {
+          "cause": {
+            "type": "string"
+          },
+          "context": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "mission": {
+            "type": "string"
+          },
+          "population": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "service_area_codes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "PatchedProgramDetailViewPatchRequest": {
+        "properties": {
+          "cause": {
+            "type": "string"
+          },
+          "context": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "geography": {
+            "type": "string"
+          },
+          "intervention": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "population": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PatchedSubscriptionsViewPatchRequest": {
+        "properties": {
+          "evidence": {
+            "type": "boolean"
+          },
+          "financial": {
+            "type": "boolean"
+          },
+          "stale": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "PilotBenchmark": {
+        "properties": {
+          "difference_from_median": {
+            "type": "string"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "maximum": {
+            "type": "string"
+          },
+          "median": {
+            "type": "string"
+          },
+          "method_version": {
+            "type": "string"
+          },
+          "minimum": {
+            "type": "string"
+          },
+          "peer_organization_count": {
+            "type": "integer"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "source_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "status": {
+            "type": "string"
+          },
+          "target_value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      },
+      "PilotBookmark": {
+        "properties": {
+          "artifact": {
+            "$ref": "#/components/schemas/Card"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "artifact",
+          "id"
+        ],
+        "type": "object"
+      },
+      "PilotBookmarkCreated": {
+        "properties": {
+          "artifact_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "artifact_id",
+          "id"
+        ],
+        "type": "object"
+      },
+      "PilotContactConsent": {
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "email",
+          "enabled",
+          "name",
+          "revision"
+        ],
+        "type": "object"
+      },
+      "PilotIdentityClaim": {
+        "properties": {
+          "artifact_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "linked_revision": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "organization": {
+            "$ref": "#/components/schemas/ClaimOrganization"
+          },
+          "proof_source_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "artifact_id",
+          "id",
+          "linked_revision",
+          "organization",
+          "proof_source_id",
+          "revision",
+          "statement",
+          "status"
+        ],
+        "type": "object"
+      },
+      "PilotIdentityProof": {
+        "properties": {
+          "document_preview": {
+            "items": {
+              "additionalProperties": {},
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "limitation": {
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "validation_status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_preview",
+          "limitation",
+          "source",
+          "statement",
+          "validation_status"
+        ],
+        "type": "object"
+      },
+      "PilotImpactReport": {
+        "properties": {
+          "cards": {
+            "items": {
+              "additionalProperties": {},
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "costs": {
+            "items": {
+              "additionalProperties": {},
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "data_quality": {
+            "items": {
+              "additionalProperties": {},
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "generated_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "observations": {
+            "items": {
+              "additionalProperties": {},
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "programs": {
+            "items": {
+              "additionalProperties": {},
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "source_kind": {
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/Source"
+            },
+            "type": "array"
+          },
+          "status": {
+            "type": "string"
+          },
+          "workspace": {
+            "$ref": "#/components/schemas/ReportWorkspace"
+          }
+        },
+        "required": [
+          "cards",
+          "costs",
+          "data_quality",
+          "generated_at",
+          "limitations",
+          "observations",
+          "programs",
+          "source_kind",
+          "sources",
+          "status",
+          "workspace"
+        ],
+        "type": "object"
+      },
+      "PilotIntroduction": {
+        "properties": {
+          "from_workspace": {
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "from_workspace",
+          "id",
+          "note",
+          "state"
+        ],
+        "type": "object"
+      },
+      "PilotIntroductionContact": {
+        "properties": {
+          "consent_revision": {
+            "type": "integer"
+          },
+          "delivery": {
+            "type": "string"
+          },
+          "email": {
+            "format": "email",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "consent_revision",
+          "delivery",
+          "email",
+          "name"
+        ],
+        "type": "object"
+      },
+      "PilotIntroductionDecision": {
+        "properties": {
+          "delivery": {
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "delivery",
+          "id",
+          "state"
+        ],
+        "type": "object"
+      },
+      "PilotMonitorJob": {
+        "properties": {
+          "job_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "state"
+        ],
+        "type": "object"
+      },
+      "PilotProfile": {
+        "properties": {
+          "cause": {
+            "type": "string"
+          },
+          "context": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "mission": {
+            "type": "string"
+          },
+          "population": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "service_area_codes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "visibility": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cause",
+          "context",
+          "mission",
+          "population",
+          "revision",
+          "service_area_codes",
+          "visibility"
+        ],
+        "type": "object"
+      },
+      "PilotWatchItem": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "last_checked_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "monitor_status": {
+            "type": "string"
+          },
+          "organization_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "organization_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "monitor_status",
+          "organization_id",
+          "organization_name"
+        ],
+        "type": "object"
+      },
+      "PilotWorkspace": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "organization_id": {
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "organization_id",
+          "role"
+        ],
+        "type": "object"
+      },
+      "Portfolio": {
+        "properties": {
+          "attributions": {
+            "items": {
+              "additionalProperties": {},
+              "type": "object"
+            },
+            "readOnly": true,
+            "type": "array"
+          },
+          "cause": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "geography": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "kind": {
+            "maxLength": 30,
+            "type": "string"
+          },
+          "method_version": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "owner_id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "payload": {},
+          "policy_version": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "portfolio": {
+            "additionalProperties": {},
+            "readOnly": true,
+            "type": "object"
+          },
+          "purpose": {
+            "maxLength": 30,
+            "type": "string"
+          },
+          "review": {
+            "additionalProperties": {},
+            "nullable": true,
+            "readOnly": true,
+            "type": "object"
+          },
+          "revision": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "source_kind": {
+            "maxLength": 24,
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/Source"
+            },
+            "readOnly": true,
+            "type": "array"
+          },
+          "status": {
+            "maxLength": 30,
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 240,
+            "type": "string"
+          }
+        },
+        "required": [
+          "attributions",
+          "created_at",
+          "id",
+          "kind",
+          "owner_id",
+          "portfolio",
+          "review",
+          "sources",
+          "title"
+        ],
+        "type": "object"
+      },
+      "PortfolioDetailViewGetResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Portfolio"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "PortfolioDetailViewPatchResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Portfolio"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "PortfoliosViewGetResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Portfolio"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "PortfoliosViewPostResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Portfolio"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "PortfoliosViewRequest": {
+        "properties": {
+          "budget_cents": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/AllocationCandidate"
+            },
+            "type": "array"
+          },
+          "constraints": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "currency": {
+            "default": "USD",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "budget_cents",
+          "candidates",
+          "name"
+        ],
+        "type": "object"
+      },
+      "ProfileViewGetEnvelope": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PilotProfile"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ProfileViewPatchEnvelope": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PilotProfile"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "Program": {
+        "properties": {
+          "cause": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "context": {},
+          "geography": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "intervention": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "type": "string"
+          },
+          "organization_id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "owner_id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "population": {
+            "maxLength": 160,
+            "type": "string"
+          },
+          "revision": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "source_id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "geography",
+          "id",
+          "intervention",
+          "name",
+          "organization_id",
+          "owner_id",
+          "population",
+          "source_id"
+        ],
+        "type": "object"
+      },
+      "ProgramDetailViewPatchResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ProgramsViewGetResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Program"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ProgramsViewPostResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Program"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ProgramsViewRequest": {
+        "properties": {
+          "cause": {
+            "type": "string"
+          },
+          "context": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "geography": {
+            "type": "string"
+          },
+          "intervention": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "population": {
+            "type": "string"
+          },
+          "source_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cause",
+          "geography",
+          "intervention",
+          "name",
+          "population",
+          "source_id"
+        ],
+        "type": "object"
+      },
+      "PurposeEnum": {
+        "description": "* `benchmarking` - benchmarking\n* `pooled_analysis` - pooled_analysis\n* `donor_access` - donor_access\n* `publication` - publication\n* `external_ai` - external_ai",
+        "enum": [
+          "benchmarking",
+          "pooled_analysis",
+          "donor_access",
+          "publication",
+          "external_ai"
+        ],
+        "type": "string"
+      },
+      "RecommendationsViewGetResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "RedeemViewPostResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SessionData"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "RedeemViewRequest": {
+        "properties": {
+          "password": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "token": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "password",
+          "token",
+          "username"
+        ],
+        "type": "object"
+      },
+      "ReportViewGetResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Artifact"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ReportWorkspace": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object"
+      },
+      "RequestsViewGetResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "RequestsViewPostResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "RequestsViewRequest": {
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/RequestsViewRequestKindEnum"
+          },
+          "note": {
+            "type": "string"
+          },
+          "target_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "note"
+        ],
+        "type": "object"
+      },
+      "RequestsViewRequestKindEnum": {
+        "description": "* `sponsored_onboarding` - sponsored_onboarding\n* `introduction` - introduction\n* `identity_claim` - identity_claim",
+        "enum": [
+          "sponsored_onboarding",
+          "introduction",
+          "identity_claim"
+        ],
+        "type": "string"
+      },
+      "ResetAccepted": {
+        "properties": {
+          "accepted": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "accepted",
+          "message"
+        ],
+        "type": "object"
+      },
+      "ResetComplete": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "reset": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "message",
+          "reset"
+        ],
+        "type": "object"
+      },
+      "ReviewDetailViewPostResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ReviewDetailViewRequest": {
+        "properties": {
+          "decision": {
+            "$ref": "#/components/schemas/DecisionEnum"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "decision",
+          "reason",
+          "revision"
+        ],
+        "type": "object"
+      },
+      "ReviewersViewGetResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "ReviewsViewGetResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Artifact"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "RoleEnum": {
+        "description": "* `analyst` - analyst\n* `editor` - editor\n* `viewer` - viewer\n* `reviewer` - reviewer",
+        "enum": [
+          "analyst",
+          "editor",
+          "viewer",
+          "reviewer"
+        ],
+        "type": "string"
+      },
+      "SessionData": {
+        "properties": {
+          "csrfToken": {
+            "type": "string"
+          },
+          "demo_mode": {
+            "type": "boolean"
+          },
+          "user": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CurrentUser"
+              }
+            ],
+            "nullable": true
+          },
+          "workspaces": {
+            "items": {
+              "$ref": "#/components/schemas/SessionWorkspace"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "csrfToken",
+          "demo_mode",
+          "user",
+          "workspaces"
+        ],
+        "type": "object"
+      },
+      "SessionViewGetResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SessionData"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "SessionWorkspace": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "organization_id": {
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "organization_id",
+          "role"
+        ],
+        "type": "object"
+      },
+      "Source": {
+        "properties": {
+          "cause": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "checksum": {
+            "maxLength": 64,
+            "type": "string"
+          },
+          "geography": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "readOnly": true,
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/SourceKindEnum"
+          },
+          "locator": {
+            "maxLength": 240,
+            "type": "string"
+          },
+          "owner_id": {
+            "format": "uuid",
+            "nullable": true,
+            "readOnly": true,
+            "type": "string"
+          },
+          "parser_version": {
+            "maxLength": 80,
+            "type": "string"
+          },
+          "period_end": {
+            "format": "date",
+            "nullable": true,
+            "type": "string"
+          },
+          "period_start": {
+            "format": "date",
+            "nullable": true,
+            "type": "string"
+          },
+          "published_at": {
+            "format": "date",
+            "nullable": true,
+            "type": "string"
+          },
+          "retrieved_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "revision": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "source_url": {
+            "format": "uri",
+            "maxLength": 200,
+            "type": "string"
+          },
+          "state": {
+            "maxLength": 20,
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 240,
+            "type": "string"
+          },
+          "transformations": {},
+          "upload_identifier": {
+            "maxLength": 160,
+            "type": "string"
+          }
+        },
+        "required": [
+          "checksum",
+          "id",
+          "kind",
+          "owner_id",
+          "parser_version",
+          "retrieved_at",
+          "title"
+        ],
+        "type": "object"
+      },
+      "SourceDetailViewGetResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Source"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "SourceKindEnum": {
+        "description": "* `public_source` - public_source\n* `ngo_contributed` - ngo_contributed\n* `synthetic_demo` - synthetic_demo",
+        "enum": [
+          "public_source",
+          "ngo_contributed",
+          "synthetic_demo"
+        ],
+        "type": "string"
+      },
+      "SourcesViewGetResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Source"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "SourcesViewPostResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Source"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "SourcesViewRequest": {
+        "properties": {
+          "cause": {
+            "type": "string"
+          },
+          "geography": {
+            "type": "string"
+          },
+          "locator": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "type": "object"
+      },
+      "StateEnum": {
+        "description": "* `accepted` - accepted\n* `declined` - declined",
+        "enum": [
+          "accepted",
+          "declined"
+        ],
+        "type": "string"
+      },
+      "SubmitViewPostResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "SubmitViewRequest": {
+        "properties": {
+          "reviewer_id": {
+            "type": "integer"
+          },
+          "revision": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "reviewer_id",
+          "revision"
+        ],
+        "type": "object"
+      },
+      "SubscriptionsViewGetResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "SubscriptionsViewPatchResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "WatchlistViewGetEnvelope": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/PilotWatchItem"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "WatchlistViewPostEnvelope": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PilotWatchItem"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "WatchlistViewPostRequest": {
+        "properties": {
+          "organization_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "organization_id"
+        ],
+        "type": "object"
+      },
+      "WithdrawViewPostResponse": {
+        "properties": {
+          "data": {},
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "WorkspacesViewPostEnvelope": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PilotWorkspace"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "WorkspacesViewPostRequest": {
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/WorkspacesViewPostRequestKindEnum"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "name"
+        ],
+        "type": "object"
+      },
+      "WorkspacesViewPostRequestKindEnum": {
+        "description": "* `ngo` - ngo\n* `foundation` - foundation",
+        "enum": [
+          "ngo",
+          "foundation"
+        ],
+        "type": "string"
+      }
+    },
+    "securitySchemes": {
+      "cookieAuth": {
+        "in": "cookie",
+        "name": "sessionid",
+        "type": "apiKey"
+      }
+    }
+  },
+  "info": {
+    "description": "Session-authenticated, permission-checked pilot API. Synthetic demo data is not real evidence.",
+    "title": "Philanthra Pilot API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/api/v1/alerts/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Alerts_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertsViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/alerts/{id}/": {
+      "patch": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "AlertDetail_patch",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedAlertDetailViewPatchRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedAlertDetailViewPatchRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedAlertDetailViewPatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertDetailViewPatchResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/analyses/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Analyses_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysesViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Analyses_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalysesViewRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalysesViewRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalysesViewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysesViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/analyses/candidates/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "AnalysisCandidates_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisCandidatesViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/artifacts/{id}/submit/": {
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Submit_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitViewRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitViewRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitViewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/audit/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Audit_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/cards/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Cards_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardsViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Cards_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardsViewRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/CardsViewRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/CardsViewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardsViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/cards/{id}/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "CardDetail_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardDetailViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "patch": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "CardDetail_patch",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedCardDetailViewPatchRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedCardDetailViewPatchRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedCardDetailViewPatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardDetailViewPatchResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/compare/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Compare_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompareViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/dashboard/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Dashboard_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/explanations/{id}/": {
+      "post": {
+        "operationId": "explanation_create",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "explanations"
+        ]
+      }
+    },
+    "/api/v1/geographies/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Geography_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographyViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/grants/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Grants_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrantsViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Grants_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrantsViewRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/GrantsViewRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/GrantsViewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrantsViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/grants/{id}/": {
+      "delete": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "GrantDetail_delete",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No response body"
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/graph/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Graph_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/import-template/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "ImportTemplate_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportTemplateViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/imports/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Imports_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportsViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Imports_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportsViewRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportsViewRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportsViewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportsViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/imports/{id}/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "ImportDetail_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportDetailViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "patch": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "ImportDetail_patch",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedImportDetailViewPatchRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedImportDetailViewPatchRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedImportDetailViewPatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportDetailViewPatchResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/imports/{id}/commit/": {
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "ImportCommit_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportCommitViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/imports/{id}/rejected/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "ImportRejected_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportRejectedViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/invitations/": {
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Invitations_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitationsViewRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitationsViewRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitationsViewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvitationsViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "session"
+        ]
+      }
+    },
+    "/api/v1/invitations/redeem/": {
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Redeem_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RedeemViewRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/RedeemViewRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/RedeemViewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RedeemViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {}
+        ],
+        "tags": [
+          "session"
+        ]
+      }
+    },
+    "/api/v1/jobs/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Jobs_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobsViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/jobs/{id}/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "JobDetail_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobDetailViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/login/": {
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginViewRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginViewRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginViewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {}
+        ],
+        "tags": [
+          "session"
+        ]
+      }
+    },
+    "/api/v1/logout/": {
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Logout_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogoutViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "session"
+        ]
+      }
+    },
+    "/api/v1/members/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Members_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembersViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "session"
+        ]
+      },
+      "patch": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Members_patch",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedMembersViewPatchRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedMembersViewPatchRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedMembersViewPatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembersViewPatchResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "session"
+        ]
+      }
+    },
+    "/api/v1/metrics/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Metrics_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetricsViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "patch": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Metrics_patch",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedMetricsViewPatchRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedMetricsViewPatchRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedMetricsViewPatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetricsViewPatchResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Metrics_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MetricsViewRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/MetricsViewRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/MetricsViewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetricsViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/observations/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Observations_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObservationsViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/opportunities/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Opportunities_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpportunitiesViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/organizations/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Organizations_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationsViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "OrganizationDetail_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDetailViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/benchmark/": {
+      "get": {
+        "operationId": "pilot_Benchmark_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BenchmarkViewGetEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/bookmarks/": {
+      "get": {
+        "operationId": "pilot_Bookmarks_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookmarksViewGetEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "post": {
+        "operationId": "pilot_Bookmarks_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookmarksViewPostRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/BookmarksViewPostRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/BookmarksViewPostRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookmarksViewPostEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/bookmarks/{id}/": {
+      "delete": {
+        "operationId": "pilot_BookmarkDetail_delete",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No response body"
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/contact/": {
+      "get": {
+        "operationId": "pilot_Contact_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactViewGetEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "put": {
+        "operationId": "pilot_Contact_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactViewPutRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactViewPutRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactViewPutRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactViewPutEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/identity-claims/": {
+      "get": {
+        "operationId": "pilot_IdentityClaims_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityClaimsViewGetEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "post": {
+        "operationId": "pilot_IdentityClaims_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdentityClaimsViewPostRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/IdentityClaimsViewPostRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/IdentityClaimsViewPostRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityClaimsViewPostEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/identity-claims/{id}/proof/": {
+      "get": {
+        "operationId": "pilot_IdentityProof_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityProofViewGetEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/impact-report/": {
+      "get": {
+        "operationId": "pilot_ImpactReport_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImpactReportViewGetEnvelope"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImpactReportViewGetEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/introductions/": {
+      "get": {
+        "operationId": "pilot_IntroductionInbox_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntroductionInboxViewGetEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/introductions/{id}/contact/": {
+      "get": {
+        "operationId": "pilot_IntroductionContact_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntroductionContactViewGetEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/introductions/{id}/decision/": {
+      "post": {
+        "operationId": "pilot_IntroductionDecision_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntroductionDecisionViewPostRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/IntroductionDecisionViewPostRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/IntroductionDecisionViewPostRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntroductionDecisionViewPostEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/monitor/": {
+      "post": {
+        "operationId": "pilot_Monitor_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonitorViewPostEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/password-reset/confirm/": {
+      "post": {
+        "operationId": "pilot_PasswordResetConfirm_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetConfirmViewPostRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetConfirmViewPostRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetConfirmViewPostRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasswordResetConfirmViewPostEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {}
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/password-reset/request/": {
+      "post": {
+        "operationId": "pilot_PasswordResetRequest_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetRequestViewPostRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetRequestViewPostRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetRequestViewPostRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasswordResetRequestViewPostEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {}
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/profile/": {
+      "get": {
+        "operationId": "pilot_Profile_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileViewGetEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "patch": {
+        "operationId": "pilot_Profile_patch",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedProfileViewPatchRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedProfileViewPatchRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedProfileViewPatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileViewPatchEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/watchlist/": {
+      "get": {
+        "operationId": "pilot_Watchlist_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WatchlistViewGetEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "post": {
+        "operationId": "pilot_Watchlist_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WatchlistViewPostRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/WatchlistViewPostRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/WatchlistViewPostRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WatchlistViewPostEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/watchlist/{id}/": {
+      "delete": {
+        "operationId": "pilot_WatchDetail_delete",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No response body"
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/pilot/workspaces/": {
+      "post": {
+        "operationId": "pilot_Workspaces_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspacesViewPostRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspacesViewPostRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspacesViewPostRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspacesViewPostEnvelope"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/portfolios/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Portfolios_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfoliosViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Portfolios_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PortfoliosViewRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PortfoliosViewRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PortfoliosViewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfoliosViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/portfolios/{id}/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "PortfolioDetail_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioDetailViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "patch": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "PortfolioDetail_patch",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedPortfolioDetailViewPatchRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedPortfolioDetailViewPatchRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedPortfolioDetailViewPatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioDetailViewPatchResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/programs/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Programs_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramsViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Programs_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramsViewRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramsViewRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgramsViewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramsViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/programs/{id}/": {
+      "patch": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "ProgramDetail_patch",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedProgramDetailViewPatchRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedProgramDetailViewPatchRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedProgramDetailViewPatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramDetailViewPatchResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/recommendations/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Recommendations_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecommendationsViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/reports/{id}/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Report_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/requests/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Requests_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestsViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Requests_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestsViewRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestsViewRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestsViewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestsViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/reviewers/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Reviewers_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewersViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/reviews/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Reviews_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewsViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/reviews/{id}/": {
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "ReviewDetail_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewDetailViewRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewDetailViewRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewDetailViewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewDetailViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/session/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Session_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {}
+        ],
+        "tags": [
+          "session"
+        ]
+      }
+    },
+    "/api/v1/sources/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Sources_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourcesViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Sources_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourcesViewRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/SourcesViewRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/SourcesViewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourcesViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/sources/{id}/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "SourceDetail_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceDetailViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/sources/{id}/withdraw/": {
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Withdraw_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WithdrawViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    },
+    "/api/v1/subscriptions/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Subscriptions_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionsViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "patch": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "Subscriptions_patch",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedSubscriptionsViewPatchRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedSubscriptionsViewPatchRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchedSubscriptionsViewPatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionsViewPatchResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      }
+    }
+  }
+}

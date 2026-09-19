@@ -1,0 +1,2 @@
+record_type,program_name,cause,intervention,population,geography,period_start,period_end,amount,currency,unit,denominator
+cost,Fictional food program,food_security,food_delivery,households,synthetic-area-1,2024-01-01,2024-12-31,1250.25,USD,households,100

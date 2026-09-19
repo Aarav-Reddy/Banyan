@@ -1,0 +1,6 @@
+# Preserve fixture bytes/checksums and explicit CSV CRLF interoperability tests.
+*.csv -text whitespace=cr-at-eol
+*.xml -text
+*.xlsx -text
+*.pdf -text
+*.png -text

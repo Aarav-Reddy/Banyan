@@ -1,0 +1,64 @@
+from django.urls import path
+
+from philanthra.accounts.views import (
+    InvitationsView,
+    LoginView,
+    LogoutView,
+    MembersView,
+    RedeemView,
+    SessionView,
+)
+
+from . import views as v
+from .schema import apply_schema
+
+urlpatterns = [
+    path("import-template/", v.ImportTemplateView.as_view()),
+    path("session/", SessionView.as_view()),
+    path("login/", LoginView.as_view()),
+    path("logout/", LogoutView.as_view()),
+    path("members/", MembersView.as_view()),
+    path("invitations/", InvitationsView.as_view()),
+    path("invitations/redeem/", RedeemView.as_view()),
+    path("organizations/", v.OrganizationsView.as_view()),
+    path("organizations/<uuid:pk>/", v.OrganizationDetailView.as_view()),
+    path("compare/", v.CompareView.as_view()),
+    path("geographies/", v.GeographyView.as_view()),
+    path("portfolios/", v.PortfoliosView.as_view()),
+    path("portfolios/<uuid:pk>/", v.PortfolioDetailView.as_view()),
+    path("programs/", v.ProgramsView.as_view()),
+    path("programs/<uuid:pk>/", v.ProgramDetailView.as_view()),
+    path("cards/", v.CardsView.as_view()),
+    path("cards/<uuid:pk>/", v.CardDetailView.as_view()),
+    path("sources/", v.SourcesView.as_view()),
+    path("sources/<uuid:pk>/", v.SourceDetailView.as_view()),
+    path("sources/<uuid:pk>/withdraw/", v.WithdrawView.as_view()),
+    path("grants/", v.GrantsView.as_view()),
+    path("grants/<uuid:pk>/", v.GrantDetailView.as_view()),
+    path("observations/", v.ObservationsView.as_view()),
+    path("analyses/", v.AnalysesView.as_view()),
+    path("analyses/candidates/", v.AnalysisCandidatesView.as_view()),
+    path("artifacts/<uuid:pk>/submit/", v.SubmitView.as_view()),
+    path("reviewers/", v.ReviewersView.as_view()),
+    path("reviews/", v.ReviewsView.as_view()),
+    path("reviews/<uuid:pk>/", v.ReviewDetailView.as_view()),
+    path("graph/", v.GraphView.as_view()),
+    path("alerts/", v.AlertsView.as_view()),
+    path("alerts/<uuid:pk>/", v.AlertDetailView.as_view()),
+    path("subscriptions/", v.SubscriptionsView.as_view()),
+    path("audit/", v.AuditView.as_view()),
+    path("jobs/", v.JobsView.as_view()),
+    path("jobs/<uuid:pk>/", v.JobDetailView.as_view()),
+    path("imports/", v.ImportsView.as_view()),
+    path("imports/<uuid:pk>/", v.ImportDetailView.as_view()),
+    path("imports/<uuid:pk>/commit/", v.ImportCommitView.as_view()),
+    path("imports/<uuid:pk>/rejected/", v.ImportRejectedView.as_view()),
+    path("opportunities/", v.OpportunitiesView.as_view()),
+    path("requests/", v.RequestsView.as_view()),
+    path("dashboard/", v.DashboardView.as_view()),
+    path("recommendations/", v.RecommendationsView.as_view()),
+    path("metrics/", v.MetricsView.as_view()),
+    path("reports/<uuid:pk>/", v.ReportView.as_view()),
+]
+
+apply_schema()

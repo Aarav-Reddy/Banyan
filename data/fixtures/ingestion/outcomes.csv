@@ -1,0 +1,2 @@
+record_type,program_name,cause,intervention,population,geography,period_start,period_end,outcome_code,outcome_definition,unit,direction,numerator,denominator,cohort_id,study_id,independent,followup_months,comparator,study_design,uncertainty,missingness,stratum
+outcome,Fictional food program,food_security,food_delivery,households,synthetic-area-1,2024-01-01,2024-12-31,custom_food_security_improved,Households reporting improved food security at six months,binary,higher_better,60,100,0001,study-0001,true,6,none,observational,,,

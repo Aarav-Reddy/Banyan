@@ -3,18 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@12.4.2",
-  "engines": { "node": ">=24 <25" },
+  "engines": {
+    "node": ">=24 <25"
+  },
   "scripts": {
     "dev": "pnpm --filter @philanthra/web dev",
     "build": "pnpm --filter @philanthra/web build",
     "check": "pnpm --filter @philanthra/web check",
     "test": "pnpm --filter @philanthra/web test",
     "test:e2e": "playwright test",
-    "api:generate": "openapi-typescript schemas/openapi.json -o packages/api-client/schema.d.ts"
+    "api:generate": "openapi-typescript schemas/openapi.json -o packages/api-client/schema.d.ts",
+    "format:check": "prettier --check apps/web/components apps/web/lib apps/web/app apps/web/tests apps/web/next.config.ts"
   },
   "devDependencies": {
-    "@playwright/test": "^1.56.1",
     "@axe-core/playwright": "^4.10.2",
-    "openapi-typescript": "^7.10.1"
+    "@playwright/test": "^1.56.1",
+    "openapi-typescript": "^7.10.1",
+    "prettier": "3.8.1"
   }
 }

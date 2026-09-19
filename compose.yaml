@@ -1,0 +1,73 @@
+name: philanthra-demo
+x-api: &api
+  build:
+    context: .
+    dockerfile: infra/api.Dockerfile
+  environment: &api-env
+    PHILANTHRA_ENV: demo
+    DATABASE_URL: postgresql://philanthra:philanthra-local@db:5432/philanthra_demo
+    SECRET_KEY: local-development-only-change-before-deployment
+    ALLOWED_HOSTS: localhost,127.0.0.1,api
+    CSRF_TRUSTED_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+    PHILANTHRA_LLM_PROVIDER: none
+  volumes:
+    - private-data:/app/.runtime
+services:
+  db:
+    image: postgres:17.11-alpine
+    environment:
+      POSTGRES_DB: philanthra_demo
+      POSTGRES_USER: philanthra
+      POSTGRES_PASSWORD: philanthra-local
+    volumes:
+      - database:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U philanthra -d philanthra_demo]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  init:
+    <<: *api
+    command: [sh, -c, "python manage.py migrate --noinput && python manage.py seed_demo"]
+    depends_on:
+      db:
+        condition: service_healthy
+  api:
+    <<: *api
+    restart: unless-stopped
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/ready/')"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  worker:
+    <<: *api
+    restart: unless-stopped
+    command: [python, manage.py, worker]
+    depends_on:
+      init:
+        condition: service_completed_successfully
+  web:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: infra/web.Dockerfile
+    environment:
+      API_INTERNAL_URL: http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+  proxy:
+    image: nginx:1.30.5-alpine
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:8080:8080
+    volumes:
+      - ./infra/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on: [web]
+volumes:
+  database:
+  private-data:

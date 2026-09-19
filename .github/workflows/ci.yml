@@ -1,0 +1,73 @@
+name: Philanthra verification
+on:
+  push:
+    branches: [aarav, main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: philanthra-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  offline-verification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17.11-alpine
+        env:
+          POSTGRES_DB: philanthra_demo
+          POSTGRES_USER: philanthra_ci
+          POSTGRES_PASSWORD: ephemeral-ci-password
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U philanthra_ci -d philanthra_demo"
+          --health-interval 5s --health-timeout 5s --health-retries 15
+    env:
+      DATABASE_URL: postgresql://philanthra_ci:ephemeral-ci-password@127.0.0.1:5432/philanthra_demo
+      PHILANTHRA_ENV: demo
+      SECRET_KEY: isolated-ci-only-not-used-for-deployment
+      NEXT_TELEMETRY_DISABLED: '1'
+      PHILANTHRA_LLM_PROVIDER: none
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.14.0'
+      - run: make setup
+      - run: bash scripts/pnpm exec playwright install --with-deps chromium
+      - run: make migrate seed
+      - run: make verify
+      - name: Install matching PostgreSQL client for restore verification
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl --fail --output /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main' | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-17
+      - run: PG_BIN=/usr/lib/postgresql/17/bin make restore-test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: verification-evidence
+          path: |
+            coverage.xml
+            playwright-report/
+            .runtime/restore-evidence.json
+          if-no-files-found: ignore
+  network-dependency-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.14.0'
+      - run: make setup
+      - run: make audit

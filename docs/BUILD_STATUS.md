@@ -1,44 +1,41 @@
-# Build checkpoint
+# Build checkpoint — 2026-09-19
 
-## Current state
+## Resumable state
 
-M0 in progress. Original proposal and Git instructions archived verbatim; full user build prompt retained at root. `aarav` verified at `e42d64e`, origin fetched successfully. Untracked root AGENTS.md is user-provided and preserved; unrelated .DS_Store ignored.
+Working branch: `aarav`; no main changes or force pushes. Original proposal, Git instructions and complete build prompt are preserved. Foundation commit `00db4c3` was pushed. This checkpoint integrates the working application; final acceptance is still in progress.
 
-## Plan and gates
+M0/M1/M2 behavior is implemented: PostgreSQL migrations, session/CSRF accounts, isolated workspaces, source-backed directory, financial metrics, exact-cent portfolios, worker imports, card review/sharing, matching, withdrawal and deletion. M3/M4 backend behavior includes fixed pooled analyses, graph edges, watchlists/monitoring, contributor reports/benchmarks, identity claims, password reset, official-source adapters and optional grounded explanations. M5 verification is active. Additional pilot API controls still need frontend integration; no end-to-end completion claim is made yet.
 
-1. M0: contracts, permissions, runtime, sessions, health, migrations and test harness.
-2. M1: stored synthetic directory, provenance, finances, discovery/compare and exact-cent portfolios.
-3. M2: quarantined imports, normalized observations, cards, review, sharing, matching and withdrawal.
-4. M3: fixed pooled analyses, graph, monitoring, reports, contributor tools and measurement.
-5. M4: official-source adapters, optional grounded AI, evaluation harness.
-6. M5: independent security/QA, browser inspection, restore/restart and full release gate.
+## Observed checks
 
-Each gate requires observed tests and a coherent commit pushed to origin/aarav. No milestone is currently claimed complete.
+- Native `make demo` exits 0; HTTP homepage/readiness available at http://127.0.0.1:8080. Stop/restart preserves seeded records.
+- PostgreSQL 17.11; Python 3.12.4 in project venv; Node24.14.0; pinned uv0.12.17/pnpm12.4.2; Django5.2.17, Next16.3.5/React19.3.0 from generated lockfiles.
+- Full integrated backend rerun: **167 passed in17.76s**. Two earlier fixtures were corrected to require explicit third-party reviewer grants, without relaxing the policy. Ruff check/format and domain/parser mypy checks pass.
+- Independent QA: nine PostgreSQL tenant/race tests passed. Tenth suppression/export case added; full run covers it.
+- Analytics branch coverage 93%, allocation100% at specialist boundary. Integrated coverage currently73%; final exact report and gaps pending.
+- Frontend TypeScript check, seven component tests and production build pass. First four desktop E2E tests exposed selector issues and actual contrast/SVG semantics defects; corrections applied, rerun pending. Eight desktop/mobile journeys exist. Actual discovery/reviewer screenshots opened; full visual QA remains pending.
+- Local backup/restore verified43tables/1,137rows with full row hashes. Latest-schema rerun pending.
+- Dependency audits with network reported no known Python or JS vulnerabilities. Offline audit unavailability is reported separately.
+- Docker is absent; Compose definitions exist but container startup has not been tested here. Native PostgreSQL execution is the tested alternative.
 
-## Ownership
+## Important fixes integrated
 
-Coordinator: integration, manifests/locks, configuration, generated API client, seed, Git, documentation.
-Initial native GPT-6 Astra/high read-only reviews completed by product_architect and security_reviewer; data_engineer is inspecting official schemas. Custom definitions are not exposed by the current spawn tool; native agents use explicit matching briefs. Session limits permit coordinator plus three active workers.
+Source locks fence job completion against withdrawal; alerts record target source revisions as well as evidence lineage. Review assignments cannot expand third-party consent. Allocation edits retain exclusions/caps/minimums and exact budget accounting. Withdrawn previews disappear immediately; required grant attribution travels into artifact JSON/CSV. Private scope is checked before retrieval, matching and pagination. API trailing slash rewriting was verified and corrected through the actual Next proxy.
 
-## Decisions
+## Ownership at checkpoint
 
-- Default requested architecture retained. Native PostgreSQL path supplements Compose because Docker is absent locally; no SQLite substitution for integration verification.
-- `/api/v1/`, session/CSRF, validated X-Workspace-ID, success `{data,meta}`, error `{error:{code,message,fields}}`, UUID IDs, integer minor-unit allocations, decimal-string ratios.
-- Binary pooled analysis is descriptive household food-security improvement over a fixed follow-up, with common definitions and explicitly disjoint cohorts. No causal inference.
-- Complete grant scopes intersect across dependencies. Publication requires fixed release, current consent and revision-bound separate review. Minimum disclosed binary cells and complements 10; minimum independent organizations 3.
+All specialists paused before coordinator Git operations. Native GPT-6 Astra/high agents performed product, security, data, analytics, backend, frontend, QA and release responsibilities. Tool capacity permits coordinator plus three active workers; custom TOML definitions do not reload this session and native explicit briefs were used. No agent performed Git operations or spawned child agents.
 
-## Observed environment
+Coordinator now owns integrated files, manifests/locks/contracts, Git, seed and documentation. Next wave: bounded frontend completion of pilot API controls, independent QA rerun and security follow-up. Preserve path ownership and isolate database tests.
 
-Node 24.14.0, Python 3.13.2 and Codex CLI 0.153.4. uv, pnpm, Docker and PostgreSQL were not initially on PATH. Isolated uv/pnpm and PostgreSQL installation pending; default sandbox blocks external network and Git metadata writes, requiring scoped escalation.
+## Next actions
 
-## Next action
+1. Finish relevant integration checks, commit and push coherent application checkpoint.
+2. Complete pilot controls, attribution rendering, verified public city-context display, source-issue review and complete graph relationships.
+3. Run desktop/mobile persisted journeys, fix actual failures; inspect captured screenshots.
+4. Finish architecture/data/API/privacy/threat/demo/roadmap docs and operational README; update requirement matrix with exact executable evidence.
+5. Final `make verify`, updated restore/restart evidence, independent security review and final commit/push.
 
-Lock domain models and service interfaces after source review; build backend and pure analytics in separate owned paths, then freeze generated contract for frontend.
+## Source boundaries
 
-## First implementation checkpoint
-
-Native specialists completed source/permission reviews; analytics implementation is complete at pure-function boundary. 53 coordinator-run analytics/provider tests pass; specialist analytics branch coverage 93% (allocation 100%). PostgreSQL 17.11 installed; isolated uv 0.12.17 and pnpm 12.4.2 installed; lockfiles generated by package managers (Django 5.2.17, Next 16.3.5, React 19.3.0). Migrations and initial seed executed successfully. Browser verification has not yet occurred.
-
-Current writers: backend_engineer owns core/accounts/jobs, frontend_engineer owns web routes/components/lib/styles/tests, data_engineer owns ingestion/fixtures/mappings/import templates. Coordinator owns configuration/runtime/seed/optional explanation boundary and generated client. All workers paused for first foundation checkpoint; core and frontend are not included until their integration checks finish.
-
-Source constraint: the official Census API returned a missing-key redirect for the requested authentic county snapshot. No real context values are fabricated; geography cards explicitly show missing measurements. Adapter local import remains required and fixture-backed.
+The Census API missing-key response is not treated as valid data. Local ACS import works with explicit snapshot/geography metadata. A separately stored, manually verified Census QuickFacts extract supplies city-wide2020–2024 income/connectivity context, never ZIP measurements or food-insecurity estimates. IRS XML fixtures are minimal parser fixtures based on inspected2022/2023/2024schemas, not complete tax returns; synthetic parser identifiers never become real EIN claims. No live LLM request was sent.

@@ -1,0 +1,18 @@
+{
+  "source_url": "https://www.census.gov/quickfacts/fact/table/baltimorecitymaryland/PST045225",
+  "retrieved_at": "2026-09-19T00:00:00Z",
+  "title": "U.S. Census Bureau QuickFacts: Baltimore city, Maryland",
+  "source_kind": "public_source",
+  "geography_code": "16000US2404000",
+  "geography_name": "Baltimore city, Maryland — city-wide context",
+  "geography_type": "census_place",
+  "period_start": "2020-01-01",
+  "period_end": "2024-12-31",
+  "boundary_vintage": "Not specified on QuickFacts extract; no boundary geometry distributed",
+  "indicators": [
+    {"label": "Median household income", "estimate": "62177", "unit": "2024 USD", "margin_of_error": null, "denominator": null, "locator": "Income & Poverty / Median households income (in 2024 dollars), 2020-2024"},
+    {"label": "Households with a broadband Internet subscription", "estimate": "85.4", "unit": "percent", "margin_of_error": null, "denominator": null, "locator": "Computer and Internet Use / Households with a broadband Internet subscription, 2020-2024"}
+  ],
+  "caveat": "City-wide ACS 2020–2024 context. Not a ZIP/ZCTA measurement or a direct measure of food insecurity. QuickFacts extract does not supply margins of error or denominators; no interval or neighborhood allocation inference is calculated.",
+  "redistribution": "Small factual extract from U.S. Census Bureau public government statistics; no third-party imagery or boundary assets. Manually verified from the cited table on the retrieval date. This is separate from synthetic nonprofit data."
+}

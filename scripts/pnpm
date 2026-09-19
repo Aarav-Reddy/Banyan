@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+if [[ -x .tools/node/node_modules/.bin/pnpm ]]; then
+  export PATH="$PWD/.tools/node/node_modules/.bin:$PATH"
+  exec .tools/node/node_modules/.bin/pnpm "$@"
+fi
+exec pnpm "$@"

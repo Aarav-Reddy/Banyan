@@ -1,0 +1,72 @@
+{
+  "source_kind": "synthetic_demo",
+  "description": "Hand-authored minimal parser fixtures based on inspected schemas; not complete IRS schema-valid tax returns and not claims about real organizations. EIN 000000001 is parser-only and must never seed a real or demo directory identity.",
+  "license": "Project-authored fixtures; repository license applies.",
+  "source_url": null,
+  "retrieved_at": null,
+  "schema_references": [
+    "https://www.irs.gov/pub/irs-tege/990x-schema-2022v5-0.zip",
+    "https://www.irs.gov/pub/irs-tege/990x-schema-2023v5-1.zip",
+    "https://www.irs.gov/pub/irs-tege/990x-schema-2024v5.0.zip",
+    "https://api.census.gov/data/2023/acs/acs5/groups/B17001.html",
+    "https://iatistandard.org/en/iati-standard/203/activity-standard/"
+  ],
+  "files": [
+    {
+      "path": "irs_990_2022.xml",
+      "sha256": "09dd09ed8a1ec62c597c8933a10a00ad1757023fbb3f94b2394d1fc4716f6845"
+    },
+    {
+      "path": "irs_990_2023.xml",
+      "sha256": "f03b562d54b17d4a77f97deea301e50c005eba3e5dcf581ed14040c2f3242ecd"
+    },
+    {
+      "path": "irs_990_2024.xml",
+      "sha256": "fd5157cdae807f8601979c0875659e6e236fc55fde9cbfde63cda674a0f8e994"
+    },
+    {
+      "path": "irs_990_2024_amended.xml",
+      "sha256": "ac34bddfffd3879878be386ea8481502765fe25810fa645bbdb7c867e10d58cf"
+    },
+    {
+      "path": "irs_990EZ_2024.xml",
+      "sha256": "c1f6b3f12fb7a6eaf721a5c587511371397c6dc7b5175f64dc0b7165eff1044e"
+    },
+    {
+      "path": "irs_990PF_2024.xml",
+      "sha256": "0d338ab5db1e3e5c67ce4efcb234c9ab0820c0f6fb802a4a437b2a1d18acca28"
+    },
+    {
+      "path": "irs_index.csv",
+      "sha256": "d3fe9fc2e8eb2127afe85a8eac61352c915d99e91fb65eb7e97840cda6dd8e78"
+    },
+    {
+      "path": "eo_bmf.csv",
+      "sha256": "e8df60d805fb367136f7f491bd976526af2fa8cacab22690b609eb044333fdc0"
+    },
+    {
+      "path": "990n.txt",
+      "sha256": "2fb95e5bc7f5a771d1e7067f75ba066de2f827f65dda13b31107822899f66cd9"
+    },
+    {
+      "path": "revocations.txt",
+      "sha256": "4fcb96f64d9ae6adfeb001756f2fec472d9200f16741fa9e571c3dab3056e772"
+    },
+    {
+      "path": "acs5_synthetic.json",
+      "sha256": "a7f8f82383e335fa53f063c581acb21966767863dd2257b1c9c1689ad5682da3"
+    },
+    {
+      "path": "iati_synthetic.xml",
+      "sha256": "72a3439cc1499de8e89e887535d7064767ff4767e23f66e22fc6ab46d21591bf"
+    },
+    {
+      "path": "outcomes.csv",
+      "sha256": "948bd57a8e8e6a00c9efa6c7f5afb49848af3d9618642636ae10651ef28dd034"
+    },
+    {
+      "path": "costs.csv",
+      "sha256": "916636f82750e201b5062ff7c17658fd5d488a66ca4063e7b15266c1c413668f"
+    }
+  ]
+}
