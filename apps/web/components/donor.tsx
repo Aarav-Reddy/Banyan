@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Row,
   OrganizationRecord,
@@ -40,14 +40,29 @@ export function Discovery() {
   const [selected, setSelected] = useState<string[]>([]),
     [focus, setFocus] = useState(""),
     [view, setView] = useState("list");
+  const advancedFilters = useRef<HTMLDetailsElement>(null);
+  const [advancedCount, setAdvancedCount] = useState(
+    () =>
+      [
+        "population",
+        "size",
+        "budget_cents",
+        "risk",
+        "outcome_definition",
+        "horizon_days",
+      ].filter(
+        (key) =>
+          query.get(key) && !(key === "risk" && query.get(key) === "all"),
+      ).length,
+  );
   return (
     <>
       <Header
-        eyebrow="Explore / Baltimore pilot"
-        title="Find your next funding conversation."
+        eyebrow="Baltimore food-security pilot"
+        title="Find nonprofits"
         action={
           <Link className="button secondary" href="/portfolios">
-            Saved portfolios ↗
+            Funding plans
           </Link>
         }
       >
@@ -71,84 +86,127 @@ export function Discovery() {
             "horizon_days",
           ])
             if (text(f, k)) p.set(k, text(f, k));
-          if (text(f, "budget"))
-            p.set("budget_cents", String(toCents(text(f, "budget"))));
+          if (text(f, "budget")) {
+            try {
+              p.set("budget_cents", String(toCents(text(f, "budget"))));
+            } catch (error) {
+              if (advancedFilters.current) {
+                advancedFilters.current.open = true;
+                advancedFilters.current
+                  .querySelector<HTMLInputElement>('[name="budget"]')
+                  ?.focus();
+              }
+              throw error;
+            }
+          }
           router.push(`/discover?${p}`);
         }}
       >
-        <Field
-          name="q"
-          label="Organization"
-          value={query.get("q") || ""}
-          placeholder="Search by name"
-        />
-        <Field name="cause" label="Cause">
-          <select name="cause" defaultValue={query.get("cause") || ""}>
-            <option value="">All causes</option>
-            <option value="food_security">Food security</option>
-          </select>
-        </Field>
-        <Field name="location" label="Service geography">
-          <select name="location" defaultValue={query.get("location") || ""}>
-            <option value="">All reported areas</option>
-            {geographies?.map((g) => (
-              <option key={g.code} value={g.code}>
-                {g.name} ({g.kind})
-              </option>
-            ))}
-          </select>
-        </Field>
-        <Field
-          name="population"
-          label="Population"
-          value={query.get("population") || ""}
-          placeholder="e.g. households"
-        />
-        <Field name="size" label="Annual revenue">
-          <select name="size" defaultValue={query.get("size") || ""}>
-            <option value="">All reported sizes</option>
-            <option value="small">Under $500,000</option>
-            <option value="medium">$500,000–$2 million</option>
-            <option value="large">$2 million and above</option>
-          </select>
-        </Field>
-        <Field
-          name="budget"
-          label="Planning budget (USD)"
-          value={
-            query.get("budget_cents")
-              ? dollars(Number(query.get("budget_cents")))
-              : ""
-          }
-          placeholder="25000.00"
-          inputMode="decimal"
-        />
-        <Field name="risk" label="Financial preference">
-          <select name="risk" defaultValue={query.get("risk") || "all"}>
-            <option value="all">Investigate all signals</option>
-            <option value="avoid_repeated_deficits">
-              Exclude repeated-deficit flags
-            </option>
-            <option value="capacity_building">
-              Investigate capacity-building needs
-            </option>
-          </select>
-        </Field>
-        <Field
-          name="outcome_definition"
-          label="Desired outcome code"
-          value={query.get("outcome_definition") || ""}
-          placeholder="e.g. food_security_improved"
-        />
-        <Field
-          name="horizon_days"
-          label="Maximum follow-up (days)"
-          type="number"
-          min="1"
-          max="3650"
-          value={query.get("horizon_days") || ""}
-          placeholder="e.g. 180"
-        />
+        <div className="discovery-primary-filters">
+          <Field
+            name="q"
+            label="Organization"
+            value={query.get("q") || ""}
+            placeholder="Search by name"
+          />
+          <Field name="cause" label="Cause">
+            <select name="cause" defaultValue={query.get("cause") || ""}>
+              <option value="">All causes</option>
+              <option value="food_security">Food security</option>
+            </select>
+          </Field>
+          <Field name="location" label="Service area">
+            <select name="location" defaultValue={query.get("location") || ""}>
+              <option value="">All reported areas</option>
+              {geographies?.map((g) => (
+                <option key={g.code} value={g.code}>
+                  {g.name} ({g.kind})
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
+        <details
+          className="advanced-filters"
+          ref={advancedFilters}
+          onInvalidCapture={(event) => {
+            event.currentTarget.open = true;
+          }}
+          onChange={(event) => {
+            const controls = event.currentTarget.querySelectorAll<
+              HTMLInputElement | HTMLSelectElement
+            >("input, select");
+            setAdvancedCount(
+              Array.from(controls).filter(
+                (control) =>
+                  control.value &&
+                  !(control.name === "risk" && control.value === "all"),
+              ).length,
+            );
+          }}
+        >
+          <summary>
+            More filters
+            <span className="advanced-filter-count">
+              {advancedCount
+                ? `${advancedCount} additional ${advancedCount === 1 ? "filter" : "filters"} set`
+                : "6 options"}
+            </span>
+          </summary>
+          <div className="form-grid">
+            <Field
+              name="population"
+              label="Population"
+              value={query.get("population") || ""}
+              placeholder="e.g. households"
+            />
+            <Field name="size" label="Annual revenue">
+              <select name="size" defaultValue={query.get("size") || ""}>
+                <option value="">All reported sizes</option>
+                <option value="small">Under $500,000</option>
+                <option value="medium">$500,000–$2 million</option>
+                <option value="large">$2 million and above</option>
+              </select>
+            </Field>
+            <Field
+              name="budget"
+              label="Planning budget (USD)"
+              value={
+                query.get("budget_cents")
+                  ? dollars(Number(query.get("budget_cents")))
+                  : ""
+              }
+              placeholder="25000.00"
+              inputMode="decimal"
+            />
+            <Field name="risk" label="Financial preference">
+              <select name="risk" defaultValue={query.get("risk") || "all"}>
+                <option value="all">Investigate all signals</option>
+                <option value="avoid_repeated_deficits">
+                  Exclude repeated-deficit flags
+                </option>
+                <option value="capacity_building">
+                  Investigate capacity-building needs
+                </option>
+              </select>
+            </Field>
+            <Field
+              name="outcome_definition"
+              label="Desired outcome code"
+              value={query.get("outcome_definition") || ""}
+              placeholder="e.g. food_security_improved"
+            />
+            <Field
+              name="horizon_days"
+              label="Maximum follow-up (days)"
+              type="number"
+              min="1"
+              max="3650"
+              value={query.get("horizon_days") || ""}
+              placeholder="e.g. 180"
+            />
+          </div>
+        </details>
       </Form>
       <div className="results-toolbar">
         <div>
@@ -162,6 +220,7 @@ export function Discovery() {
           {["list", "table"].map((v) => (
             <button
               key={v}
+              type="button"
               aria-pressed={view === v}
               onClick={() => setView(v)}
             >
@@ -180,7 +239,12 @@ export function Discovery() {
           <div className="discovery-grid">
             <section aria-label="Organization results">
               {view === "table" ? (
-                <div className="table-wrap">
+                <div
+                  className="table-wrap"
+                  role="region"
+                  aria-label="Organization results table"
+                  tabIndex={0}
+                >
                   <table>
                     <thead>
                       <tr>
@@ -217,7 +281,9 @@ export function Discovery() {
                               {o.name}
                             </Link>
                           </td>
-                          <td>{money(o.latest_filing?.revenue)}</td>
+                          <td className="numeric">
+                            {money(o.latest_filing?.revenue)}
+                          </td>
                           <td>{o.latest_filing?.tax_year || "Unknown"}</td>
                           <td>
                             <Badge>{o.source_kind}</Badge>
@@ -235,16 +301,21 @@ export function Discovery() {
                     onMouseEnter={() => setFocus(o.id)}
                   >
                     <div className="org-card-top">
-                      <span className="org-mark">
+                      <span
+                        className="org-mark"
+                        aria-label={`List position ${i + 1}`}
+                      >
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <div>
-                        <Link
-                          className="org-title"
-                          href={`/organizations/${o.id}`}
-                        >
-                          {o.name}
-                        </Link>
+                        <h2 className="org-name">
+                          <Link
+                            className="org-title"
+                            href={`/organizations/${o.id}`}
+                          >
+                            {o.name}
+                          </Link>
+                        </h2>
                         <p>
                           {o.service_areas
                             .map((g: Row) => g.name)
@@ -285,7 +356,7 @@ export function Discovery() {
                       <div>
                         <small>Evidence & financial signals</small>
                         <Link href={`/organizations/${o.id}`}>
-                          Inspect source records ↗
+                          View profile
                         </Link>
                       </div>
                     </div>
@@ -304,7 +375,7 @@ export function Discovery() {
             </section>
             <aside className="map-panel">
               <div className="panel-heading">
-                <h2>Explore the region</h2>
+                <h2>Service-area context</h2>
                 <Badge>Schematic</Badge>
               </div>
               <svg
@@ -373,7 +444,8 @@ export function Discovery() {
               </svg>
               <p className="map-note">
                 Offline schematic · Points correspond to list order, not exact
-                coordinates or verified boundaries. No inference of unmet need.
+                coordinates or verified boundaries. Numbers are positions, not
+                rankings. No inference of unmet need.
               </p>
               {focus && (
                 <div className="map-selected">
@@ -415,10 +487,14 @@ export function Discovery() {
             className="button primary"
             href={`/allocate?ids=${selected.join(",")}`}
           >
-            Plan allocation →
+            Plan funding
           </Link>
-          <button className="text-button" onClick={() => setSelected([])}>
-            Clear
+          <button
+            type="button"
+            className="text-button"
+            onClick={() => setSelected([])}
+          >
+            Clear selection
           </button>
         </div>
       )}
@@ -502,25 +578,51 @@ export function Organization({ id }: { id: string }) {
             </span>
           </div>
           <div className="two-columns">
-            <Panel title="Organization & community">
-              <Details
-                data={{
-                  population: data.organization.population,
-                  reported_service_areas: data.organization.service_areas.map(
-                    (x: Row) => ({
-                      name: x.name,
-                      basis: x.basis,
-                      kind: x.kind,
-                      context: x.context,
-                    }),
+            <Panel title="Organization and reported context" variant="open">
+              <dl className="profile-facts">
+                <div>
+                  <dt>Population served</dt>
+                  <dd>{data.organization.population || "Not reported"}</dd>
+                </div>
+                <div>
+                  <dt>Headquarters ZIP</dt>
+                  <dd>
+                    {data.organization.headquarters_zip || "Not reported"}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Reported funding capacity</dt>
+                  <dd>{money(data.organization.capacity_cents, true)}</dd>
+                </div>
+                <div>
+                  <dt>Capacity context</dt>
+                  <dd>{data.organization.capacity_note || "Not reported"}</dd>
+                </div>
+              </dl>
+              <h3>Reported service areas</h3>
+              <p className="fine">
+                Service areas are separate from the headquarters address.
+              </p>
+              {data.organization.service_areas.length ? (
+                data.organization.service_areas.map(
+                  (area: Row, index: number) => (
+                    <div className="service-area-record" key={index}>
+                      <h4>{area.name}</h4>
+                      <Details
+                        data={{
+                          basis: area.basis,
+                          kind: area.kind,
+                          context: area.context,
+                        }}
+                      />
+                    </div>
                   ),
-                  headquarters_zip: data.organization.headquarters_zip,
-                  capacity: money(data.organization.capacity_cents, true),
-                  capacity_note: data.organization.capacity_note,
-                }}
-              />
+                )
+              ) : (
+                <p>Not reported</p>
+              )}
             </Panel>
-            <Panel title="Financial warning signals">
+            <Panel title="Financial warning signals" variant="open">
               <p className="fine">
                 Transparent policy signals, not a probability of collapse.
                 Method {data.financial_signals.method_version}.
@@ -537,12 +639,17 @@ export function Organization({ id }: { id: string }) {
               ))}
             </Panel>
           </div>
-          <Panel title="Financial history">
+          <Panel title="Financial history" variant="open">
             <p className="fine">
               Financial values in USD. Program spending does not measure
               outcomes or impact. Revisions and fiscal periods are preserved.
             </p>
-            <div className="table-wrap">
+            <div
+              className="table-wrap"
+              role="region"
+              aria-label="Financial history"
+              tabIndex={0}
+            >
               <table>
                 <thead>
                   <tr>
@@ -571,7 +678,9 @@ export function Organization({ id }: { id: string }) {
                         "assets",
                         "liabilities",
                       ].map((k) => (
-                        <td key={k}>{money(f[k])}</td>
+                        <td key={k} className="numeric">
+                          {money(f[k])}
+                        </td>
                       ))}
                       <td>
                         {f.revision} {f.active ? "active" : "superseded"}
@@ -596,7 +705,7 @@ export function Organization({ id }: { id: string }) {
             </details>
             <Sources sources={data.filings.map((f: Row) => f.source)} />
           </Panel>
-          <Panel title="Programs & permitted evidence">
+          <Panel title="Programs and permitted evidence" variant="open">
             {data.programs.map((p: Row) => (
               <div className="list-row" key={p.id}>
                 <div>
@@ -631,13 +740,13 @@ export function Compare() {
   return (
     <>
       <Header
-        title="Compare with context."
+        title="Compare organizations"
         action={
           <Link
             className="button primary"
             href={`/allocate?ids=${p.get("ids") || ""}`}
           >
-            Build a funding plan →
+            Plan funding
           </Link>
         }
       >
@@ -646,9 +755,14 @@ export function Compare() {
       </Header>
       <State data={data} error={error}>
         {data && (
-          <Panel>
-            <div className="table-wrap">
-              <table>
+          <Panel variant="open">
+            <div
+              className="table-wrap"
+              role="region"
+              aria-label="Organization comparison"
+              tabIndex={0}
+            >
+              <table className="comparison-table">
                 <thead>
                   <tr>
                     <th>Reported measure</th>
@@ -670,9 +784,9 @@ export function Compare() {
                     ["Liabilities (USD)", "liabilities"],
                   ].map(([caption, key]) => (
                     <tr key={key}>
-                      <th>{caption}</th>
+                      <th scope="row">{caption}</th>
                       {data.organizations.map((o: Row) => (
-                        <td key={o.id}>
+                        <td key={o.id} className="numeric">
                           {key === "tax_year"
                             ? o.latest_filing?.[key] || "Unknown"
                             : money(o.latest_filing?.[key])}
@@ -719,10 +833,7 @@ export function Allocation() {
   );
   return (
     <>
-      <Header
-        eyebrow="Foundation / Decision support"
-        title="Build a considered funding plan."
-      >
+      <Header eyebrow="Funding plan draft" title="Plan funding">
         Choose candidates, disclose planning assumptions, then review the
         server-calculated allocation.
       </Header>
@@ -733,6 +844,7 @@ export function Allocation() {
       </Notice>
       <State data={data} error={error}>
         <Form
+          className="form allocation-form"
           submit="Calculate & save draft"
           success="Draft saved."
           onSubmit={async (f) => {
@@ -762,7 +874,7 @@ export function Allocation() {
             router.push(`/portfolios/${draft.id}`);
           }}
         >
-          <Panel title="01 · Define the plan">
+          <Panel title="Plan details" variant="open">
             <div className="form-grid">
               <Field
                 label="Portfolio name"
@@ -779,7 +891,7 @@ export function Allocation() {
               />
             </div>
           </Panel>
-          <Panel title="02 · Choose candidates & constraints">
+          <Panel title="Candidates and constraints" variant="open">
             <Field label="Add an organization" name="candidate">
               <select
                 value=""
@@ -892,10 +1004,10 @@ export function Portfolios() {
   return (
     <>
       <Header
-        title="Your funding plans."
+        title="Funding plans"
         action={
           <Link className="button primary" href="/allocate">
-            Create a portfolio +
+            Create funding plan
           </Link>
         }
       >
@@ -904,11 +1016,16 @@ export function Portfolios() {
       <State data={data} error={error}>
         {data?.length ? (
           <Panel>
-            <div className="table-wrap">
+            <div
+              className="table-wrap"
+              role="region"
+              aria-label="Saved funding plans"
+              tabIndex={0}
+            >
               <table>
                 <thead>
                   <tr>
-                    <th>Portfolio</th>
+                    <th>Funding plan</th>
                     <th>Budget</th>
                     <th>Unallocated</th>
                     <th>Review status</th>
@@ -922,8 +1039,12 @@ export function Portfolios() {
                         <Link href={`/portfolios/${p.id}`}>{p.title}</Link>
                         <small>{date(p.created_at)}</small>
                       </td>
-                      <td>{money(p.portfolio.budget_cents, true)}</td>
-                      <td>{money(p.portfolio.unallocated_cents, true)}</td>
+                      <td className="numeric">
+                        {money(p.portfolio.budget_cents, true)}
+                      </td>
+                      <td className="numeric">
+                        {money(p.portfolio.unallocated_cents, true)}
+                      </td>
                       <td>
                         <Badge>{p.status}</Badge>
                       </td>
@@ -946,10 +1067,15 @@ export function Portfolios() {
 }
 function PortfolioCoverage({ data }: { data: Row }) {
   return (
-    <Panel title="Current geographic coverage">
+    <Panel title="Current geographic coverage" variant="open">
       <p>{data.scope}</p>
       <Notice>{data.caveat}</Notice>
-      <div className="table-wrap">
+      <div
+        className="table-wrap"
+        role="region"
+        aria-label="Current geographic coverage"
+        tabIndex={0}
+      >
         <table>
           <caption>
             Reported service areas and possible investigation gaps
@@ -1040,7 +1166,7 @@ export function Portfolio({ id }: { id: string }) {
       {data && (
         <>
           <Header
-            eyebrow="Saved portfolio / Planning only"
+            eyebrow="Saved funding plan · No money moves"
             title={data.title}
             action={
               <div className="actions">
@@ -1073,7 +1199,7 @@ export function Portfolio({ id }: { id: string }) {
             a plan invalidates approval. Program spending and donor weights are
             not impact estimates.
           </Notice>
-          <Panel title="Allocation & rationale">
+          <Panel title="Allocation and rationale" variant="open">
             <Form
               submit="Save allocation edits"
               onSubmit={async (f) => {
@@ -1087,7 +1213,12 @@ export function Portfolio({ id }: { id: string }) {
                 setVersion(version + 1);
               }}
             >
-              <div className="table-wrap">
+              <div
+                className="table-wrap"
+                role="region"
+                aria-label="Allocation amounts and rationale"
+                tabIndex={0}
+              >
                 <table>
                   <thead>
                     <tr>

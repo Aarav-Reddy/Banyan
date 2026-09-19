@@ -78,12 +78,15 @@ test("donor discovers, compares, saves exact-cent draft, obtains separate review
     .getByRole("link", { name: "Compare organizations", exact: true })
     .click();
   await expect(
-    page.getByRole("heading", { name: "Compare with context." }),
+    page.getByRole("heading", { name: "Compare organizations" }),
   ).toBeVisible();
   await expect(
     page.getByRole("row").filter({ hasText: "Revenue (USD)" }),
   ).toHaveCount(1);
-  await page.getByRole("link", { name: "Build a funding plan" }).click();
+  await page
+    .locator("main")
+    .getByRole("link", { name: "Plan funding", exact: true })
+    .click();
   const title = `QA reviewed portfolio ${info.project.name}`;
   await page.getByLabel("Portfolio name").fill(title);
   await page.getByLabel("Total budget (USD)").fill("100.01");
