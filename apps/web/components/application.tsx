@@ -45,6 +45,13 @@ import {
   Report,
   Audit,
 } from "./shared";
+import {
+  PasswordReset,
+  SavedEvidence,
+  Watchlist,
+  ImpactReport,
+  CreateWorkspace,
+} from "./pilot";
 const WorkspaceContext = createContext<Workspace>({
   id: "",
   name: "",
@@ -68,6 +75,25 @@ export function Application({ path }: { path: string[] }) {
       })
       .catch((e) => setError(e.message));
   }, []);
+  useEffect(() => {
+    const refresh = (event: Event) => {
+      const id = (event as CustomEvent<string>).detail;
+      api<Session>("session/")
+        .then((s) => {
+          const selectedId = s.workspaces.some((w) => w.id === id)
+            ? id
+            : s.workspaces[0]?.id || "";
+          configureSession(s, selectedId);
+          setSession(s);
+          setSelected(selectedId);
+          router.push("/settings");
+        })
+        .catch((e) => setError(e.message));
+    };
+    window.addEventListener("philanthra:workspace-created", refresh);
+    return () =>
+      window.removeEventListener("philanthra:workspace-created", refresh);
+  }, [router]);
   const ws = session?.workspaces.find((w) => w.id === selected);
   const page = path[0] || "";
   function signedIn(s: Session) {
@@ -100,7 +126,8 @@ export function Application({ path }: { path: string[] }) {
     !page ||
     page === "login" ||
     page === "demo" ||
-    page === "join"
+    page === "join" ||
+    page === "password-reset"
   )
     return (
       <div className="public-shell">
@@ -121,8 +148,10 @@ export function Application({ path }: { path: string[] }) {
             )}
           </nav>
         </header>
-        {["login", "demo", "join"].includes(page) ||
-        (!session.user && page && page !== "methodology") ? (
+        {page === "password-reset" ? (
+          <PasswordReset />
+        ) : ["login", "demo", "join"].includes(page) ||
+          (!session.user && page && page !== "methodology") ? (
           <Login
             demo={!!session.demo_mode}
             onLogin={signedIn}
@@ -148,6 +177,7 @@ export function Application({ path }: { path: string[] }) {
           No workspace membership is available. Ask your workspace owner for a
           scoped invitation.
         </Notice>
+        <CreateWorkspace />
       </main>
     );
   const donor = ws.kind === "foundation";
@@ -164,6 +194,9 @@ export function Application({ path }: { path: string[] }) {
           ["uploads", "↑", "Data & uploads"],
         ]),
     ["evidence", "◇", "Evidence library"],
+    ["saved", "▤", "Saved evidence"],
+    ["watchlist", "◎", "Watchlist"],
+    ...(!donor ? [["impact-report", "▤", "Impact report"]] : []),
     ["analyses", "◫", "Pooled analysis"],
     ["graph", "⌘", "Knowledge graph"],
     ...(!donor ? [["opportunities", "↗", "Funding opportunities"]] : []),
@@ -172,6 +205,15 @@ export function Application({ path }: { path: string[] }) {
   ];
   let content: React.ReactNode;
   switch (page) {
+    case "saved":
+      content = <SavedEvidence />;
+      break;
+    case "watchlist":
+      content = <Watchlist />;
+      break;
+    case "impact-report":
+      content = <ImpactReport />;
+      break;
     case "discover":
       content = <Discovery />;
       break;
@@ -351,8 +393,9 @@ export function Application({ path }: { path: string[] }) {
           </header>
           {session.demo_mode && (
             <div className="demo-banner">
-              <span>DEMO ENVIRONMENT</span> Fictional organizations and
-              synthetic evidence. No money is moved.
+              <span>DEMO ENVIRONMENT</span> Fictional nonprofit organizations
+              and synthetic program evidence. Public context is labeled
+              separately. No money is moved.
             </div>
           )}
           {error && <Notice tone="error">{error}</Notice>}
@@ -522,6 +565,11 @@ function Login({
             <Link href="/join">Have an invitation? Join a workspace</Link>
           )}
         </p>
+        {!join && (
+          <p>
+            <Link href="/password-reset">Forgot your password?</Link>
+          </p>
+        )}
         {demo && !join && (
           <div className="demo-roles">
             <p className="eyebrow">Or enter as a demo role</p>

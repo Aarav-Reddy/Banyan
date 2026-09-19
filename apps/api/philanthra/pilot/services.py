@@ -38,6 +38,12 @@ def after_review(artifact, actor, decision):
         artifact=artifact
     )
     if decision != "approved":
+        if claim.linked_revision is not None:
+            c.Workspace.objects.filter(
+                pk=artifact.owner_id, organization_id=claim.organization_id
+            ).update(organization=None)
+            claim.linked_revision = None
+            claim.save(update_fields=["linked_revision", "updated_at"])
         return
     if artifact.status != "approved" or not can_artifact(artifact, artifact.owner):
         raise Conflict("Identity proof is stale or unavailable.")
@@ -419,12 +425,17 @@ def financial_benchmark(workspace):
 @transaction.atomic
 def after_source_withdrawal(source):
     """Root withdrawal calls this synchronously: verification is a revocable derivative."""
+    source = c.Source.objects.select_for_update().get(pk=source.pk)
     for claim in IdentityClaim.objects.filter(proof_source=source).select_related("artifact"):
         if claim.linked_revision is not None:
             c.Workspace.objects.filter(
                 pk=claim.artifact.owner_id, organization_id=claim.organization_id
             ).update(organization=None)
-        claim.statement = "Withdrawn identity proof"
+        claim.statement = (
+            "Withdrawn identity proof"
+            if source.state != "active"
+            else "Identity proof changed; new review required."
+        )
         claim.linked_revision = None
         claim.save()
 

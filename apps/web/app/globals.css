@@ -636,7 +636,7 @@ input[type="checkbox"] {
 .badge.quarantined {
   background: #fff5df;
   border-color: #edd9ab;
-  color: #976b22;
+  color: #74500d;
 }
 .badge.withdrawn,
 .badge.invalidated,
@@ -1887,4 +1887,72 @@ details > summary {
   table {
     font-size: 10px;
   }
+}
+
+/* Supplemental pilot workflows retain the workspace's shared visual language. */
+.map-note,
+.map-legend,
+.app-footer,
+.app-footer a {
+  color: #526349;
+}
+.community-context {
+  padding: 1.25rem;
+  border-top: 1px solid var(--line, #d9ded3);
+}
+.community-context h3 {
+  font-size: 1rem;
+}
+.community-context dl {
+  margin: 1rem 0;
+}
+.community-context dt {
+  color: #526349;
+  font-size: 0.8rem;
+}
+.community-context dd {
+  margin: 0.2rem 0 1rem;
+  font-weight: 600;
+}
+.attributions {
+  margin: 1rem 0;
+  padding: 0.8rem 1rem;
+  background: #f2f5ed;
+  border-left: 3px solid #718a55;
+  font-size: 0.85rem;
+}
+.attributions ul {
+  padding-left: 1.2rem;
+  margin-bottom: 0;
+}
+.inline-link {
+  margin-left: 0.75rem;
+}
+.form fieldset {
+  border: 1px solid #c9d0bf;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  min-width: 0;
+}
+.form fieldset legend {
+  font-weight: 600;
+  padding: 0 0.3rem;
+}
+@media print {
+  .attributions {
+    break-inside: avoid;
+  }
+}
+.discovery-summary {
+  border-top: 1px solid #e0e4d9;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+}
+.signal-list {
+  list-style: none;
+  padding: 0;
+}
+.signal-list li {
+  margin: 0.5rem 0;
 }

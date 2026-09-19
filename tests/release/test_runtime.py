@@ -49,3 +49,23 @@ def test_invalid_command_cannot_start_services(monkeypatch):
     monkeypatch.setattr(runtime.sys, "argv", ["runtime.py", "reset"])
     with pytest.raises(SystemExit, match="demo\\|dev\\|stop"):
         runtime.main()
+
+
+def test_port_check_rejects_live_listener_but_allows_immediate_restart(monkeypatch, tmp_path):
+    import socket
+
+    monkeypatch.setattr(runtime, "RUNTIME", tmp_path)
+    with socket.socket() as listener:
+        listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        listener.bind(("127.0.0.1", 0))
+        port = listener.getsockname()[1]
+        listener.listen(1)
+        with pytest.raises(RuntimeError, match="occupied by an untracked service"):
+            runtime.check_port("isolated-test", port)
+        with socket.create_connection(("127.0.0.1", port), timeout=2) as client:
+            accepted, _ = listener.accept()
+            with accepted:
+                accepted.shutdown(socket.SHUT_WR)
+                assert client.recv(1) == b""
+    # The previous server-side connection may still be in TCP TIME_WAIT.
+    runtime.check_port("isolated-test", port)

@@ -29,7 +29,7 @@ check:
 	$(PNPM) check
 	$(PY) scripts/generate_contract.py --check
 test:
-	.venv/bin/pytest -q --cov=philanthra --cov-report=term-missing --cov-report=xml
+	.venv/bin/pytest -q --cov=philanthra --cov-branch --cov-report=term-missing --cov-report=xml
 	$(PNPM) test
 test-e2e:
 	$(PNPM) test:e2e

@@ -60,3 +60,17 @@ These pure-function checks are only one layer. The service must prohibit arbitra
 `evaluate_historical` accepts already-computed experimental probabilities, an explicit binary outcome definition, positive integer horizon, training cutoff and validation cutoff. It does not train a model. Required dates distinguish feature availability, prediction, horizon adjudication and label availability. Features after prediction are rejected; adjudication must cover exactly the stated horizon; training/validation labels must be available by their respective cutoffs. Organizations may not cross temporal partitions. Unknown labels, missing-filing and auto-revocation proxy labels are rejected. Actual outcome validity and the provenance of externally trained predictions still need independent audit.
 
 Each nonempty partition reports class balance, Brier score (mean squared probability error), training-prevalence baseline Brier score, five fixed calibration-bin means and observed frequencies, and pairwise ROC AUC with half credit for ties when both classes exist. AUC is unavailable for single-class partitions. No confidence intervals or prospective validity are asserted. Empty data or a real-validation request containing any synthetic records returns `not_validated`. Explicit synthetic-mode runs return `synthetic_harness_only`. **Every path leaves `model_enabled=False`.** The repository tests exercise software correctness, not real-world predictive validity.
+
+## Planning dimensions and evaluation command
+
+Candidate planning notes retain need, evidence, financial uncertainty and goal fit separately; capacity is a distinct cap/assumption. Blank notes remain null. These notes do not secretly change weights. Donors explicitly set positive proportional weights (equal default 1 is disclosed), caps, minimums and exclusions; consequential review binds the stored input notes/constraints plus source snapshot. Sensitivity is inspectable by recalculating with different disclosed weights, not an assertion of a validated optimum.
+
+```sh
+PYTHONPATH=apps/api .venv/bin/python -m philanthra.analytics.evaluate
+```
+
+Without a real label dataset the command prints not_validated/model_enabled:false and exits 2. Supply --input with JSON containing records, train_end, validation_end, label_definition and horizon_days. Synthetic harness mode requires --synthetic-harness-only and is never empirical validation. The CLI forwards to the same leakage-checked pure function tested in tests/analytics.
+
+## Current portfolio geography
+
+The service-area coverage view considers active public reported/verified records (including explicitly synthetic reported demo records) for the candidate causes and countries. Only positive planning allocations count as selected. It groups exact recorded area codes; it does not infer polygon intersections, ZIP/ZCTA equivalence, headquarters service areas or a geographic distribution of money. Two selected organizations reporting one area suggest possible collaboration. Areas represented elsewhere in the directory but absent from the plan are investigation gaps within the dataset, not proof of real-world underfunding. Missing private/withdrawn service records do not contribute titles, counts or citations. The source-versioned current view is labeled separately from an approved allocation snapshot.

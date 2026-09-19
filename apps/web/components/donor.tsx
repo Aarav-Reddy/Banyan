@@ -29,6 +29,7 @@ import {
   text,
 } from "./ui";
 import { useWorkspace } from "./application";
+import { CommunityContext, WatchOrganization, Attributions } from "./pilot";
 export function Discovery() {
   const query = useSearchParams(),
     router = useRouter();
@@ -288,6 +289,9 @@ export function Discovery() {
                         </Link>
                       </div>
                     </div>
+                    <DiscoverySummary
+                      summary={(o as unknown as Row).discovery_summary}
+                    />
                     <div className="org-card-footer">
                       <Badge>{o.source_kind}</Badge>
                       <span>
@@ -381,6 +385,7 @@ export function Discovery() {
                 <span className="dot" /> Organizations with reported service
                 areas
               </div>
+              <CommunityContext geographies={geographies || []} />
             </aside>
           </div>
         )}
@@ -420,6 +425,57 @@ export function Discovery() {
     </>
   );
 }
+export function DiscoverySummary({ summary }: { summary?: Row }) {
+  if (!summary)
+    return (
+      <p className="fine">
+        Financial summary unavailable; inspect the source records.
+      </p>
+    );
+  const share = summary.program_spending_share;
+  return (
+    <div className="discovery-summary">
+      <div className="actions">
+        <span>
+          <strong>Program-spending share:</strong>{" "}
+          {share?.value == null
+            ? "Unknown"
+            : new Intl.NumberFormat("en-US", {
+                style: "percent",
+                maximumFractionDigits: 1,
+              }).format(Number(share.value))}
+        </span>
+        <span>
+          <strong>Approved evidence cards:</strong>{" "}
+          {summary.approved_evidence_cards}
+        </span>
+      </div>
+      {share?.value == null && share?.reason && (
+        <p className="fine">{share.reason}</p>
+      )}
+      <p className="fine">
+        {summary.evidence_caveat} Program-spending share is not an impact
+        measure.
+      </p>
+      {summary.financial_flags?.length > 0 && (
+        <ul className="signal-list">
+          {summary.financial_flags.map((f: Row) => (
+            <li key={f.code}>
+              <Badge>{f.state}</Badge> <strong>{label(f.code)}</strong>:{" "}
+              {f.explanation}
+            </li>
+          ))}
+        </ul>
+      )}
+      {summary.missing_fields?.length > 0 && (
+        <p className="fine">
+          Missing financial fields:{" "}
+          {summary.missing_fields.map(label).join(", ")}. Missing is not zero.
+        </p>
+      )}
+    </div>
+  );
+}
 export function Organization({ id }: { id: string }) {
   const { data, error } = useResource(`organizations/${id}/`);
   return (
@@ -438,6 +494,7 @@ export function Organization({ id }: { id: string }) {
             {data.organization.mission}
           </Header>
           <div className="actions">
+            <WatchOrganization id={id} />
             <Badge>{data.organization.source_kind}</Badge>
             <Badge>{data.organization.status}</Badge>
             <span>
@@ -693,6 +750,11 @@ export function Allocation() {
                   ? { cap_cents: toCents(text(f, `cap_${id}`)) }
                   : {}),
                 assumption_note: text(f, `note_${id}`),
+                dimensions: Object.fromEntries(
+                  ["need", "evidence", "financial_uncertainty", "goal_fit"].map(
+                    (key) => [key, text(f, `${key}_${id}`) || null],
+                  ),
+                ),
                 excluded: f.has(`exclude_${id}`),
                 minimum_cents: toCents(text(f, `minimum_${id}`) || "0"),
               })),
@@ -785,6 +847,33 @@ export function Allocation() {
                       hint="Required when entering a cap for unknown capacity."
                     />
                   </div>
+                  <details>
+                    <summary>
+                      Separate planning dimensions and limitations
+                    </summary>
+                    <p className="fine">
+                      Keep need, evidence, financial uncertainty and goal fit
+                      separate. Blank notes remain unknown and are not converted
+                      into scores. The weight above is your explicit planning
+                      assumption.
+                    </p>
+                    <div className="form-grid">
+                      {[
+                        "need",
+                        "evidence",
+                        "financial_uncertainty",
+                        "goal_fit",
+                      ].map((key) => (
+                        <Field
+                          key={key}
+                          label={`${label(key)} rationale`}
+                          name={`${key}_${id}`}
+                          maxLength={1000}
+                          placeholder="Unknown / not yet assessed"
+                        />
+                      ))}
+                    </div>
+                  </details>
                   <label className="check-label">
                     <input type="checkbox" name={`exclude_${id}`} /> Exclude
                     from this draft
@@ -853,6 +942,92 @@ export function Portfolios() {
         )}
       </State>
     </>
+  );
+}
+function PortfolioCoverage({ data }: { data: Row }) {
+  return (
+    <Panel title="Current geographic coverage">
+      <p>{data.scope}</p>
+      <Notice>{data.caveat}</Notice>
+      <div className="table-wrap">
+        <table>
+          <caption>
+            Reported service areas and possible investigation gaps
+          </caption>
+          <thead>
+            <tr>
+              <th>Area / type</th>
+              <th>Planned organizations</th>
+              <th>Interpretation</th>
+              <th>Sources</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.areas.map((area: Row) => (
+              <tr key={area.code}>
+                <td>
+                  {area.name}
+                  <small>
+                    {area.code} · {label(area.kind)}
+                  </small>
+                </td>
+                <td>
+                  {area.selected_organizations.length
+                    ? area.selected_organizations.map((org: Row) => (
+                        <p key={org.id}>
+                          <Link href={`/organizations/${org.id}`}>
+                            {org.name}
+                          </Link>{" "}
+                          · {label(org.basis)}
+                        </p>
+                      ))
+                    : "None in this plan"}
+                </td>
+                <td>
+                  {label(area.status)}
+                  <small>
+                    {area.directory_organization_count} organizations report
+                    this area in the available directory.
+                  </small>
+                </td>
+                <td>
+                  {area.source_ids.map((source: string, i: number) => (
+                    <p key={source}>
+                      <Link href={`/sources/${source}`}>Source {i + 1}</Link>
+                    </p>
+                  ))}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {!data.areas.length && (
+        <Empty title="No eligible service-area records">
+          Geographic coverage is unknown; headquarters locations are not
+          substituted.
+        </Empty>
+      )}
+      {!!data.unknown_service_area_organizations.length && (
+        <Notice>
+          Service areas unknown for:{" "}
+          {data.unknown_service_area_organizations
+            .map((org: Row) => org.name)
+            .join(", ")}
+          . Collect reported service geography before judging coverage.
+        </Notice>
+      )}
+      <details>
+        <summary>Coverage method and current source revisions</summary>
+        <Details
+          data={{
+            method_version: data.method_version,
+            as_of: data.as_of,
+            sources: data.sources,
+          }}
+        />
+      </details>
+    </Panel>
   );
 }
 export function Portfolio({ id }: { id: string }) {
@@ -952,12 +1127,16 @@ export function Portfolio({ id }: { id: string }) {
               <Details data={data.payload} />
             </details>
           </Panel>
+          {data.portfolio.geographic_coverage && (
+            <PortfolioCoverage data={data.portfolio.geographic_coverage} />
+          )}
           {write && (
             <ReviewSubmit
               artifact={data}
               onSaved={() => setVersion(version + 1)}
             />
           )}
+          <Attributions artifact={data} />
           <Sources sources={data.sources} />
           {data.review && (
             <Panel title="Review decision">

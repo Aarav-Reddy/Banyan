@@ -64,6 +64,9 @@ def seed_demo():
 
     ensure_public_context()
     if m.AuditEvent.objects.filter(action="demo.seed", object_id=SEED_VERSION).exists():
+        from .upgrade import upgrade_early_fixture_periods
+
+        upgrade_early_fixture_periods()
         return "Demo already seeded; existing records and user changes preserved."
     User = get_user_model()
     roles = [

@@ -1,41 +1,58 @@
-# Build checkpoint — 2026-09-19
+# Build status — 2026-09-19
 
-## Resumable state
+## Repository and milestones
 
-Working branch: `aarav`; no main changes or force pushes. Original proposal, Git instructions and complete build prompt are preserved. Foundation commit `00db4c3` was pushed. This checkpoint integrates the working application; final acceptance is still in progress.
+The runnable pilot is implemented on `aarav`. No main changes, force push, invented remote, payment workflow or public deployment occurred. The original proposal is archived byte-for-byte (SHA-256 `d599bff2bdba60792f1ec7024835ede99071db77e6c5a9cba0c48cb521e8a0a4`), along with original Git instructions and the complete build request. Foundation commit `00db4c3` and integrated application commit `4f50a0e` were pushed to origin/aarav. The final release commit is the commit containing this checkpoint; consult `git log -1` for its ID.
 
-M0/M1/M2 behavior is implemented: PostgreSQL migrations, session/CSRF accounts, isolated workspaces, source-backed directory, financial metrics, exact-cent portfolios, worker imports, card review/sharing, matching, withdrawal and deletion. M3/M4 backend behavior includes fixed pooled analyses, graph edges, watchlists/monitoring, contributor reports/benchmarks, identity claims, password reset, official-source adapters and optional grounded explanations. M5 verification is active. Additional pilot API controls still need frontend integration; no end-to-end completion claim is made yet.
+| Milestone | Delivered behavior |
+| --- | --- |
+| M0 | Preflight, archived inputs, native specialist reviews, TOML role definitions, architecture/contracts, normalized schema, auth/health, environment and test harness. |
+| M1 | Backend-seeded directory, fixture financial ingestion/signals, discovery/detail/comparison and exact-cent persistent allocation with provenance and isolation. |
+| M2 | Mapped aggregate upload, leased worker validation/commit, program/card editing, independent review, purpose-specific sharing, matching/alerts, withdrawal and deletion. |
+| M3 | Fixed pooled binary analysis/suppression, graph, source-bound reports, watchlists/periodic monitoring, current geographic coverage, benchmarks/opportunities, identity/contact/onboarding and opt-in metrics. |
+| M4 | Inspected IRS/status/ACS/IATI local adapters, bounded opt-in source fetching, manual catalogue import, deterministic explanations, optional grounded provider and honest evaluation harness. |
+| M5 | Full interface, desktop/mobile persisted journeys, independent security/race regressions, production guards, setup/restore/restart checks, source-linked docs and handoff. Compose verification remains external. |
 
-## Observed checks
+## Observed final checks
 
-- Native `make demo` exits 0; HTTP homepage/readiness available at http://127.0.0.1:8080. Stop/restart preserves seeded records.
-- PostgreSQL 17.11; Python 3.12.4 in project venv; Node24.14.0; pinned uv0.12.17/pnpm12.4.2; Django5.2.17, Next16.3.5/React19.3.0 from generated lockfiles.
-- Full integrated backend rerun: **167 passed in17.76s**. Two earlier fixtures were corrected to require explicit third-party reviewer grants, without relaxing the policy. Ruff check/format and domain/parser mypy checks pass.
-- Independent QA: nine PostgreSQL tenant/race tests passed. Tenth suppression/export case added; full run covers it.
-- Analytics branch coverage 93%, allocation100% at specialist boundary. Integrated coverage currently73%; final exact report and gaps pending.
-- Frontend TypeScript check, seven component tests and production build pass. First four desktop E2E tests exposed selector issues and actual contrast/SVG semantics defects; corrections applied, rerun pending. Eight desktop/mobile journeys exist. Actual discovery/reviewer screenshots opened; full visual QA remains pending.
-- Local backup/restore verified43tables/1,137rows with full row hashes. Latest-schema rerun pending.
-- Dependency audits with network reported no known Python or JS vulnerabilities. Offline audit unavailability is reported separately.
-- Docker is absent; Compose definitions exist but container startup has not been tested here. Native PostgreSQL execution is the tested alternative.
+Native environment: macOS ARM64; PostgreSQL 17.11; project Python 3.12.4; Node 24.14.0; pinned uv 0.12.17 / pnpm 12.4.2. Lockfiles resolve Django 5.2.17, Next 16.3.5 and React 19.3.0.
 
-## Important fixes integrated
+| Command / check | Observed result |
+| --- | --- |
+| `make doctor` | Passed; Docker absent, native PostgreSQL detected. |
+| `make setup` | Passed using frozen lockfiles and registry access; 68 Python packages checked, JavaScript lock unchanged. Initial sandbox DNS failure was not treated as success. No global conda modification. |
+| `make verify` | Passed, exit 0: **192 backend tests in 49.27 seconds, 13 component tests, 14 browser tests**, production build, checks and real-backend smoke. |
+| `make check` (within verify) | Ruff lint/format, domain/parser mypy (14 files), Django system/migration drift, Prettier, strict TypeScript and generated OpenAPI/client drift passed. |
+| `make build` | Production Next build passed. |
+| Real-backend browser tests | Passed all fourteen cases across 1440px desktop and 390px mobile; main contexts block external destinations and use real local API responses. |
+| `make smoke` | Passed fresh migrations/seed, readiness, session/CSRF login and persisted discovery. |
+| `make demo`, repeated `make stop`/`make demo` | Passed actual loopback readiness. Rapid restart regression fixed; **183 records across seven domain tables** retained matching full-row hashes. Running URL: http://127.0.0.1:8080/demo. |
+| `make restore-test` | Passed isolated scratch restore: **49 tables / 1,244 rows**, full-row SHA-256 hashes from the same PostgreSQL snapshot. Scratch database removed. This does not certify future backups. |
+| Dependency audits | Earlier Python and JavaScript network advisory audits reported no known vulnerabilities for these lockfiles. No dependency changes followed. Network audits are separate from the deterministic gate. |
+| Optional live provider smoke | Explicitly running without its opt-in flag produced **1 skipped**, no network. Not part of default test collection; no live model test success is claimed. |
+| Original archive and diff | Original README blob equals archived proposal byte-for-byte; `git diff --check` passed. |
 
-Source locks fence job completion against withdrawal; alerts record target source revisions as well as evidence lineage. Review assignments cannot expand third-party consent. Allocation edits retain exclusions/caps/minimums and exact budget accounting. Withdrawn previews disappear immediately; required grant attribution travels into artifact JSON/CSV. Private scope is checked before retrieval, matching and pagination. API trailing slash rewriting was verified and corrected through the actual Next proxy.
+## Coverage and what it proves
 
-## Ownership at checkpoint
+Backend coverage includes branch measurement: approximately **81.6% line coverage and 65.6% branch coverage** (combined pytest-cov display 78%). Allocation has **100% line and branch coverage**; pooling 97.4% lines / 95.2% branches; policy 80.4% / 71.9%; core transactional services 90.1% / 72.6%; worker 83.2% / 64.1%. These are observed module coverage, not claims of exhaustive security. API orchestration branches, operator CLI error variants, graph variants and rare worker recovery paths have lower coverage. Browser execution is separate and is not merged into Python coverage. See generated local `coverage.xml` for exact statement/branch counts: 3,780 / 4,631 lines and 940 / 1,432 branches.
 
-All specialists paused before coordinator Git operations. Native GPT-6 Astra/high agents performed product, security, data, analytics, backend, frontend, QA and release responsibilities. Tool capacity permits coordinator plus three active workers; custom TOML definitions do not reload this session and native explicit briefs were used. No agent performed Git operations or spawned child agents.
+Tests use hand-checkable financial/pooling examples, Hypothesis allocation properties and real PostgreSQL concurrent transactions. Independent regressions verify queued edits, publication and workers waiting behind withdrawal locks, stale lease fencing, reviewer authority, private existence/count/citation/export isolation and identity invalidation. Default tests never call live external data/model services.
 
-Coordinator now owns integrated files, manifests/locks/contracts, Git, seed and documentation. Next wave: bounded frontend completion of pilot API controls, independent QA rerun and security follow-up. Preserve path ownership and isolate database tests.
+## Inspection, findings and ownership
 
-## Next actions
+Actual desktop/mobile screenshots were captured and opened using image tools. Discovery passed configured axe WCAG A/AA checks and keyboard/overflow/console assertions at both widths. This is not application-wide accessibility certification. Representative review, analysis, portfolio and NGO views were inspected; screenshots prove rendering, not backend/scientific correctness.
 
-1. Finish relevant integration checks, commit and push coherent application checkpoint.
-2. Complete pilot controls, attribution rendering, verified public city-context display, source-issue review and complete graph relationships.
-3. Run desktop/mobile persisted journeys, fix actual failures; inspect captured screenshots.
-4. Finish architecture/data/API/privacy/threat/demo/roadmap docs and operational README; update requirement matrix with exact executable evidence.
-5. Final `make verify`, updated restore/restart evidence, independent security review and final commit/push.
+Security findings and focused rechecks are in SECURITY_REVIEW.md; independent journey evidence is in QA_REPORT.md. Fixed integration defects include reviewer privilege escalation, authorization after a blocked edit, stale identity linkage, production host defaults, opportunity lookup, forgotten attribution, source/target alert invalidation, hidden match titles, missing-numerator collection prompts, contrast/SVG semantics, synthetic service-area omission and TCP TIME_WAIT restart handling. Assertions were retained when fixing defects.
 
-## Source boundaries
+Native GPT-6 Astra/high agents performed product, security, data, analytics, backend, frontend, QA and release responsibilities through bounded assignments. Custom TOML definitions do not reload this session; equivalent explicit native role briefs were used. All specialist threads completed and handed ownership back before Git operations. No subagent spawned another agent or mutated Git. Coordinator owns the final integrated files, manifests/contracts, documentation and Git.
 
-The Census API missing-key response is not treated as valid data. Local ACS import works with explicit snapshot/geography metadata. A separately stored, manually verified Census QuickFacts extract supplies city-wide2020–2024 income/connectivity context, never ZIP measurements or food-insecurity estimates. IRS XML fixtures are minimal parser fixtures based on inspected2022/2023/2024schemas, not complete tax returns; synthetic parser identifiers never become real EIN claims. No live LLM request was sent.
+## Acceptance boundaries and next operator actions
+
+R01–R24 are mapped to implementation and executable checks in ACCEPTANCE_MATRIX.md. The final independent read-only audit found and rechecked the workspace-creation UI and portfolio geography additions; no material concern remained from that bounded review.
+
+- **Docker/Compose has not been executed here** because Docker is unavailable. Linux/fresh clone on another machine, production TLS/proxy, real email, encrypted production storage/backups, operational load and remote CI are not claimed verified. Run the documented Compose/fresh-clone gate before deployment.
+- Fixtures cover inspected minimal IRS variants, not every authentic filing. IATI/status adapters preserve source-reported registry structures; they do not manufacture validated program outcomes. Public community context is a narrow city QuickFacts extract, not ZIP-level food insecurity. Grant eligibility text requires human confirmation beyond the implemented cause/geography match.
+- No real labeled financial evaluation, live provider request, real grant, pilot adoption, expert review, outcome improvement, sponsor commitment or governance council is claimed. Optional and licensed integrations remain explicit extension boundaries.
+- Production requires dedicated clean storage, strong secrets, exact hosts/HTTPS origins, TLS, encrypted disks/backups, retention/withdrawal replay, configured delivery/monitoring, qualified independent reviewers and human pilot governance. Demo credentials/data must never be promoted.
+
+To resume development: read this checkpoint and AGENTS.md, fetch origin on aarav, keep isolated test databases, make a bounded change and rerun relevant gates. To run the pilot now: `make demo`; use the README's demo-only accounts. No work is promised to continue invisibly after handoff.

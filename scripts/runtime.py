@@ -52,6 +52,9 @@ def check_port(name, port):
     if path.exists() and owns_process(json.loads(path.read_text())):
         return
     with socket.socket() as sock:
+        # Match the server's address reuse: TIME_WAIT is not a live listener.
+        # SO_REUSEPORT is intentionally not enabled, so real listeners still fail.
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
             sock.bind(("127.0.0.1", port))
         except PermissionError as exc:

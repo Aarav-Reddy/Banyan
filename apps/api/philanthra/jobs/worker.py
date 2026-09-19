@@ -1,6 +1,7 @@
 """Leased PostgreSQL work with idempotency and final token/source fencing."""
 
 import hashlib
+import logging
 import uuid
 from datetime import timedelta
 
@@ -329,6 +330,14 @@ def finish_job(job, result=None):
     current.lease_expires_at = None
     current.save()
     m.JobAttempt.objects.filter(job=current, token=job.lease_token).update(status="completed")
+    logging.getLogger("philanthra.jobs").info(
+        "job_completed",
+        extra={
+            "job_id": str(current.id),
+            "workspace_id": str(current.owner_id),
+            "status": current.state,
+        },
+    )
     return True
 
 
@@ -337,6 +346,14 @@ def fail_job(job, code):
     current = m.Job.objects.select_for_update().get(pk=job.pk)
     if current.lease_token != job.lease_token or current.state != "processing":
         return
+    logging.getLogger("philanthra.jobs").warning(
+        "job_failed",
+        extra={
+            "job_id": str(current.id),
+            "workspace_id": str(current.owner_id),
+            "error_code": code,
+        },
+    )
     current.error_code = code
     current.state = "failed" if current.attempts >= current.max_attempts else "queued"
     current.available_at = timezone.now() + timedelta(seconds=2**current.attempts)

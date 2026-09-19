@@ -1019,6 +1019,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/source-issues/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use. */
+        get: operations["SourceIssues_get"];
+        put?: never;
+        /** @description Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use. */
+        post: operations["SourceIssues_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/sources/": {
         parameters: {
             query?: never;
@@ -1121,6 +1139,9 @@ export interface components {
         AllocationCandidate: {
             assumption_note?: string;
             cap_cents?: number | null;
+            dimensions?: {
+                [key: string]: string | null;
+            };
             excluded?: boolean;
             minimum_cents?: number;
             /** Format: uuid */
@@ -1696,6 +1717,9 @@ export interface components {
             capacity_note?: string;
             cause?: string;
             country?: string;
+            readonly discovery_summary: {
+                [key: string]: unknown;
+            };
             headquarters_zip?: string;
             /** Format: uuid */
             readonly id: string;
@@ -2215,6 +2239,24 @@ export interface components {
             meta: {
                 [key: string]: unknown;
             };
+        };
+        SourceIssuesViewGetResponse: {
+            data: components["schemas"]["Artifact"][];
+            meta: {
+                [key: string]: unknown;
+            };
+        };
+        SourceIssuesViewPostResponse: {
+            data: components["schemas"]["Artifact"];
+            meta: {
+                [key: string]: unknown;
+            };
+        };
+        SourceIssuesViewRequest: {
+            issue: string;
+            /** Format: uuid */
+            source_id: string;
+            title: string;
         };
         /**
          * @description * `public_source` - public_source
@@ -4154,6 +4196,54 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SessionViewGetResponse"];
+                };
+            };
+        };
+    };
+    SourceIssues_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Workspace-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SourceIssuesViewGetResponse"];
+                };
+            };
+        };
+    };
+    SourceIssues_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-Workspace-ID"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SourceIssuesViewRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["SourceIssuesViewRequest"];
+                "multipart/form-data": components["schemas"]["SourceIssuesViewRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SourceIssuesViewPostResponse"];
                 };
             };
         };

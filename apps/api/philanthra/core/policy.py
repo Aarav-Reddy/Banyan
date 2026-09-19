@@ -84,6 +84,10 @@ def reviewer_scope_allowed(artifact, reviewer):
     """Owner delegation covers own sources; third-party sources retain recipient limits."""
     if not reviewer or not reviewer.is_active:
         return False
+    if Membership.objects.filter(
+        user=reviewer, workspace=artifact.owner, role__in=WRITE_ROLES
+    ).exists():
+        return False
     dependencies = list(artifact.dependencies.select_related("source", "grant"))
     return any(
         all(

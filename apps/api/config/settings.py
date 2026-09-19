@@ -135,10 +135,10 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "metadata"}},
-    "formatters": {
-        "metadata": {
-            "format": '{"level":"%(levelname)s","logger":"%(name)s","event":"%(message)s"}'
-        }
+    "formatters": {"metadata": {"()": "config.logging.MetadataFormatter"}},
+    "loggers": {
+        "philanthra.requests": {"handlers": ["console"], "level": "INFO", "propagate": False},
+        "philanthra.jobs": {"handlers": ["console"], "level": "INFO", "propagate": False},
     },
     "root": {"handlers": ["console"], "level": "WARNING"},
 }
@@ -146,6 +146,14 @@ LOGGING = {
 if ENVIRONMENT not in {"demo", "development", "test", "production"}:
     raise ImproperlyConfigured("Unknown PHILANTHRA_ENV")
 if ENVIRONMENT == "production":
+    if (
+        not os.getenv("ALLOWED_HOSTS")
+        or not ALLOWED_HOSTS
+        or any(host in {"localhost", "127.0.0.1", "api", "testserver"} for host in ALLOWED_HOSTS)
+    ):
+        raise ImproperlyConfigured(
+            "Production requires explicit deployment hostnames; development defaults are forbidden"
+        )
     if DEBUG or len(SECRET_KEY) < 50 or "local-development" in SECRET_KEY or "*" in ALLOWED_HOSTS:
         raise ImproperlyConfigured(
             "Production requires debug off, a strong secret and explicit hosts"

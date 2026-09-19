@@ -39,6 +39,7 @@ def apply_schema():
         v.ProgramsView: s.ProgramSerializer,
         v.CardsView: s.CardSerializer,
         v.SourcesView: s.SourceSerializer,
+        v.SourceIssuesView: s.ArtifactSerializer,
         v.GrantsView: s.GrantSerializer,
         v.ObservationsView: s.ObservationSerializer,
         v.AnalysesView: s.ArtifactSerializer,
@@ -56,6 +57,7 @@ def apply_schema():
         v.ReportView: s.ArtifactSerializer,
     }
     requests = {
+        v.SourceIssuesView: {"source_id": uuid(), "title": text(), "issue": text(max_length=4000)},
         accounts.LoginView: {"username": text(), "password": text(write_only=True)},
         accounts.InvitationsView: {
             "email": serializers.EmailField(),
@@ -75,6 +77,12 @@ def apply_schema():
                     name="AllocationCandidate",
                     fields={
                         "organization_id": uuid(),
+                        "dimensions": serializers.DictField(
+                            child=serializers.CharField(
+                                allow_null=True, allow_blank=True, max_length=1000
+                            ),
+                            required=False,
+                        ),
                         "cap_cents": number(min_value=0, allow_null=True, required=False),
                         "assumption_note": text(required=False),
                         "weight": serializers.DecimalField(

@@ -16,7 +16,7 @@ Open <http://127.0.0.1:8080>. Demo users include `foundation-admin`, `ngo-owner`
 
 ## Canonical Compose environment
 
-When Docker is available, `make demo` builds API/web images and starts PostgreSQL, migration/seed init, Gunicorn, worker, web and a same-origin Nginx proxy. Only the proxy publishes a loopback port. Named database/private-upload volumes persist through `make stop`. Never use `docker compose down --volumes` on data you need. The Compose file intentionally contains only local demo credentials; it is not a production secret configuration.
+When Docker is available, `make demo` builds API/web images and starts PostgreSQL, migration/seed init, Gunicorn, worker, web and a same-origin Nginx proxy. Only the proxy publishes a loopback port. Named database/private-runtime volumes persist through `make stop`. Never use `docker compose down --volumes` on data you need. The Compose file intentionally contains only local demo credentials; it is not a production secret configuration.
 
 The local verification machine has no Docker. The Compose configuration has been reviewed, but image build/startup has not been executed there. This remains a distinct release verification gap; a successful native run does not prove container behavior.
 
@@ -41,3 +41,5 @@ CI installs matching PostgreSQL clients from the [official PostgreSQL Ubuntu pac
 ## Production prerequisites
 
 Deploy only after security/pilot review and completed container/fresh-clone verification. Supply dedicated database credentials, a strong random Django secret, exact hosts and HTTPS CSRF origins; set `PHILANTHRA_ENV=production`, debug off and no demo auth. Configure a trusted TLS reverse proxy, external encrypted database/upload/backup storage, restrictive service accounts, secret rotation, monitoring, backup retention and restore drills. `STORAGE_ENCRYPTION_ACK=configured` is an operator acknowledgment, not application-provided encryption. The bundled loopback HTTP proxy is a demo configuration and must be replaced for deployment. Configure production email explicitly before inviting users. Outbound models remain off unless authorized data-use grants and separate credentials permit them. No production launch or real private-data import has been performed.
+
+Production WSGI and worker startup also inspect migration state and reject a copied seeded demo database (demo seed audit marker/reserved demo identities). Explicit deployment ALLOWED_HOSTS is mandatory; localhost/api/testserver defaults are rejected. A storage-encryption acknowledgment is an operator assertion, not encryption implemented by this code. Public password-reset links require PHILANTHRA_PUBLIC_ORIGIN and explicit production email enablement; local file mail remains the default development sink.

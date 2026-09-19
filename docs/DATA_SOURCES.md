@@ -50,3 +50,24 @@ Manual registry/grant data should enter through reviewed application editors wit
 [Fixture manifest](../data/fixtures/ingestion/manifest.json) records SHA-256 for every synthetic fixture, source schema references and the absence of real source URLs. Parser-only EIN `000000001` must never be seeded into directory organizations. Synthetic ACS values attached to geographic test codes are not live public measurements and must remain labeled synthetic.
 
 IRS content reuse is subject to the [IRS reuse policy](https://www.irs.gov/about-irs/use-of-content-from-irsgov); third-party material is not automatically public domain. [Census policy](https://www2.census.gov/foia/ds_policies/ds027.pdf) discusses government-created works. [IATI licensing](https://web-terms.iatistandard.org/en/latest/copyright/) separates documentation/software from publisher-owned data: inspect each publisher's actual license before redistribution. No third-party raw IATI activity is bundled here. Preserve original public snapshots unchanged, add source URL/retrieval/license/checksum manifests, and keep public fixtures separate from synthetic fixtures and private uploads.
+
+## Persisting normalized records
+
+`PYTHONPATH=apps/api .venv/bin/python -m philanthra.ingestion --help` documents parser-only local/opt-in network use. To persist after operator review:
+
+```sh
+.venv/bin/python apps/api/manage.py import_public --adapter irs_xml --file /path/to/return.xml --manifest /path/to/source-manifest.json --actor authorized-operator --activate
+.venv/bin/python apps/api/manage.py import_catalog --kind opportunity --file /path/to/opportunities.csv --manifest /path/to/source-manifest.json --actor authorized-operator
+```
+
+A persistence manifest needs explicit source_kind, retrieved_at with timezone, and an authoritative source_url for real public data. Parser fixture manifests intentionally have no real retrieval date/location; an operator must supply a truthful fixture-handling timestamp for synthetic persistence. Synthetic imports are restricted to demo/test and use parser namespaces, never real EIN claims. --activate selects a filing revision explicitly and invalidates dependent snapshots; without it, the revision is retained but inactive. Duplicate source checksums/identifiers do not duplicate filings.
+
+Manual catalogue templates are schemas/templates/registry.csv and opportunities.csv. Exact fields are required, fields are bounded, dates/cents validated and unknown/sensitive columns rejected. Registry namespaces must identify the actual jurisdiction/source; they confer no workspace ownership. Supplied registry/status/IATI source records remain available in source transformations where the pilot cannot responsibly turn them into compatible outcome observations.
+
+## Small real context snapshot
+
+`data/fixtures/public-context/baltimore-quickfacts.json` is a separately labeled, manually verified U.S. Census public factual extract: Baltimore city2020–2024 median household income and broadband subscription. It has original URL, retrieval time, window, locators and computed checksum. No MOE/denominator is supplied by the extract, so these stay null. It is city-wide context, never assigned to a ZIP or treated as food insecurity. Source licensing/redistribution notes are in the file. Eight fictional service areas remain explicitly schematic.
+
+## Extension boundary
+
+Commercial providers including Candid are unavailable without a separately configured licensed adapter. The current local formats and authenticated exports work now; a new provider must implement the parser envelope, bounded retrieval, explicit identifier namespace, source rights/locators and policy-checked persistence. Do not bypass consent by indexing an upload as a public source. Unsupported IRS variants/geographies return diagnostics rather than fabricated values. The network catalogue is intentionally small; redirects, oversized distributions and missing credentials fail visibly. Large official archives must be preselected locally and pass expansion/path limits; default setup never downloads them.

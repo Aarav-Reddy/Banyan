@@ -1,7 +1,7 @@
 {
   "source_kind": "synthetic_demo",
   "description": "Hand-authored minimal parser fixtures based on inspected schemas; not complete IRS schema-valid tax returns and not claims about real organizations. EIN 000000001 is parser-only and must never seed a real or demo directory identity.",
-  "license": "Project-authored fixtures; repository license applies.",
+  "license": "Project-authored synthetic fixtures may be used, copied, modified and redistributed for testing; see ../LICENSE.md.",
   "source_url": null,
   "retrieved_at": null,
   "schema_references": [

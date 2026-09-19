@@ -141,6 +141,9 @@ def submit_review(artifact, actor, reviewer_id, revision):
     )
     artifact.status = "pending_review"
     artifact.save(update_fields=["status", "updated_at"])
+    from philanthra.pilot.services import after_review
+
+    after_review(artifact, actor, "pending_review")
     audit(artifact.owner, actor, "review.submitted", artifact.id, revision=revision)
     return artifact
 
@@ -149,7 +152,10 @@ def submit_review(artifact, actor, reviewer_id, revision):
 def decide_review(artifact, actor, revision, decision, reason):
     list(Source.objects.select_for_update().filter(dependency__artifact=artifact).order_by("id"))
     artifact = Artifact.objects.select_for_update().get(pk=artifact.pk)
-    if artifact.revision != revision or artifact.status != "pending_review":
+    if artifact.revision != revision or not (
+        artifact.status == "pending_review"
+        or (decision == "withdrawn" and artifact.status == "approved")
+    ):
         raise Conflict()
     if (
         artifact.created_by_id == actor.id
@@ -201,6 +207,7 @@ def decide_review(artifact, actor, revision, decision, reason):
                 )
     snapshot = {
         "publication_grants": publication_grants,
+        "planning_inputs": artifact.portfolio.constraints if artifact.kind == "portfolio" else None,
         "payload": artifact.payload,
         "sources": [
             {
@@ -376,6 +383,21 @@ def create_portfolio(owner, actor, data):
             raise ValidationError(
                 {"cap_cents": "Planning cap exceeds the recorded approved capacity."}
             )
+        dimensions = c.get("dimensions", {})
+        dimension_names = {"need", "evidence", "financial_uncertainty", "goal_fit"}
+        if (
+            not isinstance(dimensions, dict)
+            or set(dimensions) - dimension_names
+            or any(
+                value is not None and (not isinstance(value, str) or len(value) > 1000)
+                for value in dimensions.values()
+            )
+        ):
+            raise ValidationError(
+                {
+                    "dimensions": "Use separate need/evidence/financial_uncertainty/goal_fit notes of at most1,000 characters; unknown stays null."
+                }
+            )
         normalized.append(
             {
                 "id": str(org.id),
@@ -383,6 +405,7 @@ def create_portfolio(owner, actor, data):
                 "assumption_cap_cents": cap if org.capacity_cents is None else None,
                 "assumption_note": note,
                 "weight": str(c.get("weight", "1")),
+                "dimensions": {key: dimensions.get(key) or None for key in sorted(dimension_names)},
                 "minimum_cents": c.get("minimum_cents", 0),
                 "excluded": c.get("excluded", False),
                 "source_ids": [str(f.source_id) for f in filings],
@@ -421,3 +444,14 @@ def create_portfolio(owner, actor, data):
             ),
         )
     return artifact
+
+
+def source_revision_changed(source):
+    """Called with the source lock held after changing its revision."""
+    from philanthra.pilot.services import after_source_withdrawal
+
+    after_source_withdrawal(source)
+    ids = Dependency.objects.filter(source=source).values_list("artifact_id", flat=True)
+    Artifact.objects.filter(id__in=ids).update(status="invalidated")
+    Alert.objects.filter(artifact_id__in=ids).update(state="invalidated")
+    Alert.objects.filter(target_source=source).update(state="invalidated")

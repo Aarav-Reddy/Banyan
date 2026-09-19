@@ -30,7 +30,14 @@ import {
   Action,
 } from "./ui";
 import { useWorkspace } from "./application";
+import {
+  Benchmark,
+  SaveEvidence,
+  Attributions,
+  PermittedContact,
+} from "./pilot";
 export function Dashboard() {
+  const [expandedMatches, setExpandedMatches] = useState<string[]>([]);
   const { data, error } = useResource("dashboard/");
   const { data: recommendations } = useResource<Row[]>("recommendations/");
   return (
@@ -100,6 +107,7 @@ export function Dashboard() {
                 <Link href="/uploads">Review data & validation →</Link>
               </Panel>
             </div>
+            <Benchmark />
             <Panel title="Ideas to investigate">
               <p className="fine">
                 Context-based transfer suggestions. Evidence strength,
@@ -109,34 +117,57 @@ export function Dashboard() {
                 <div key={r.program_id}>
                   <h3>{r.program_name}</h3>
                   {r.matches.matches?.length ? (
-                    r.matches.matches.map((m: Row) => (
-                      <article className="recommendation" key={m.id}>
-                        <div className="panel-heading">
-                          <Link href={`/evidence/${m.id}`}>{m.title}</Link>
-                          <Badge>{m.evidence_label}</Badge>
-                        </div>
-                        <p>{m.explanation}</p>
-                        <details>
-                          <summary>
-                            Similarities, gaps & adaptation questions
-                          </summary>
-                          <Details
-                            data={{
-                              similarities: m.similarities,
-                              differences: m.differences,
-                              missing_context: m.missing_context,
-                              failures: m.failures,
-                              adaptation_questions: m.adaptation_questions,
-                            }}
-                          />
-                        </details>
-                      </article>
-                    ))
+                    r.matches.matches
+                      .slice(
+                        0,
+                        expandedMatches.includes(r.program_id) ? undefined : 6,
+                      )
+                      .map((m: Row) => (
+                        <article className="recommendation" key={m.id}>
+                          <div className="panel-heading">
+                            <Link href={`/evidence/${m.id}`}>{m.title}</Link>
+                            <Badge>{m.evidence_label}</Badge>
+                          </div>
+                          <p>{m.explanation}</p>
+                          <details>
+                            <summary>
+                              Similarities, gaps & adaptation questions
+                            </summary>
+                            <Details
+                              data={{
+                                similarities: m.similarities,
+                                differences: m.differences,
+                                missing_context: m.missing_context,
+                                failures: m.failures,
+                                adaptation_questions: m.adaptation_questions,
+                              }}
+                            />
+                          </details>
+                        </article>
+                      ))
                   ) : (
                     <Empty title="Insufficient compatible evidence">
                       Add program context and check again when permissioned
                       evidence becomes available.
                     </Empty>
+                  )}
+                  {r.matches.matches?.length > 6 && (
+                    <button
+                      className="secondary"
+                      onClick={() =>
+                        setExpandedMatches(
+                          expandedMatches.includes(r.program_id)
+                            ? expandedMatches.filter(
+                                (id) => id !== r.program_id,
+                              )
+                            : [...expandedMatches, r.program_id],
+                        )
+                      }
+                    >
+                      {expandedMatches.includes(r.program_id)
+                        ? "Show first six suggestions"
+                        : `Show all ${r.matches.matches.length} context matches`}
+                    </button>
                   )}
                 </div>
               ))}
@@ -405,6 +436,8 @@ export function Cards() {
                   Mixed or failed results documented
                 </p>
               )}
+              <Attributions artifact={c} />
+              <SaveEvidence id={c.id} />
               <div className="org-card-footer">
                 <Badge>{c.source_kind}</Badge>
                 <Link href={`/evidence/${c.id}`}>Read evidence →</Link>
@@ -451,6 +484,7 @@ export function Card({ id }: { id: string }) {
             <Badge>{data.status}</Badge>
             <Badge>{data.source_kind}</Badge>
             <span>Revision {data.revision}</span>
+            <SaveEvidence id={id} />
           </div>
           <div className="two-columns">
             <Panel title="Program & context">
@@ -522,6 +556,7 @@ export function Card({ id }: { id: string }) {
               onSaved={() => setVersion(version + 1)}
             />
           )}
+          <Attributions artifact={data} />
           <Sources sources={data.sources} />
           {data.review && (
             <Panel title="Version-bound review">
@@ -1013,7 +1048,16 @@ export function ImportDetail({ id }: { id: string }) {
 }
 export function Opportunities() {
   const { data, error } = useResource<Row[]>("opportunities/");
-  const { data: requests } = useResource<Row[]>("requests/");
+  const [version, setVersion] = useState(0);
+  const { data: requests, error: requestError } = useResource<Row[]>(
+    "requests/",
+    version,
+  );
+  const { data: cards } = useResource<Row[]>("cards/");
+  const recipients = new Map<string, string>();
+  for (const c of cards || [])
+    if (c.status === "approved")
+      recipients.set(c.owner_id, c.card?.program?.name || c.title);
   return (
     <>
       <Header title="Funding opportunities, with context.">
@@ -1052,27 +1096,45 @@ export function Opportunities() {
         </p>
         <Form
           submit="Save introduction request"
-          onSubmit={(f) =>
-            mutate("requests/", "POST", {
+          onSubmit={async (f) => {
+            await mutate("requests/", "POST", {
               kind: "introduction",
+              target_id: text(f, "target_id"),
               note: text(f, "note"),
-            })
-          }
+            });
+            setVersion(version + 1);
+          }}
         >
+          <Field label="Evidence contributor to contact" name="target_id">
+            <select name="target_id" required>
+              <option value="">Choose a permitted contributor</option>
+              {Array.from(recipients).map(([id, name]) => (
+                <option key={id} value={id}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </Field>
           <Textarea
             label="Who would you like to learn from, and why?"
             name="note"
             required
           />
         </Form>
-        {requests?.map((r) => (
-          <div className="list-row" key={r.id}>
-            <span>
-              {label(r.kind)} · {r.note}
-            </span>
-            <Badge>{r.state}</Badge>
-          </div>
-        ))}
+        <State data={requests} error={requestError}>
+          {requests?.map((r) => (
+            <div className="list-row" key={r.id}>
+              <span>
+                {label(r.kind)} · {r.note}
+              </span>
+              <Badge>{r.state}</Badge>
+              {r.state === "accepted" && <PermittedContact id={r.id} />}
+            </div>
+          ))}
+          {requests?.length === 0 && (
+            <p className="fine">No introduction requests sent.</p>
+          )}
+        </State>
       </Panel>
     </>
   );

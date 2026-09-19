@@ -89,6 +89,14 @@
             "nullable": true,
             "type": "integer"
           },
+          "dimensions": {
+            "additionalProperties": {
+              "maxLength": 1000,
+              "nullable": true,
+              "type": "string"
+            },
+            "type": "object"
+          },
           "excluded": {
             "type": "boolean"
           },
@@ -1788,6 +1796,11 @@
             "maxLength": 2,
             "type": "string"
           },
+          "discovery_summary": {
+            "additionalProperties": {},
+            "readOnly": true,
+            "type": "object"
+          },
           "headquarters_zip": {
             "maxLength": 12,
             "type": "string"
@@ -1835,6 +1848,7 @@
           }
         },
         "required": [
+          "discovery_summary",
           "id",
           "latest_filing",
           "name",
@@ -3379,6 +3393,62 @@
         "required": [
           "data",
           "meta"
+        ],
+        "type": "object"
+      },
+      "SourceIssuesViewGetResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Artifact"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "SourceIssuesViewPostResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Artifact"
+          },
+          "meta": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "type": "object"
+      },
+      "SourceIssuesViewRequest": {
+        "properties": {
+          "issue": {
+            "maxLength": 4000,
+            "type": "string"
+          },
+          "source_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "issue",
+          "source_id",
+          "title"
         ],
         "type": "object"
       },
@@ -6998,6 +7068,94 @@
         ],
         "tags": [
           "session"
+        ]
+      }
+    },
+    "/api/v1/source-issues/": {
+      "get": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "SourceIssues_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceIssuesViewGetResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
+        ]
+      },
+      "post": {
+        "description": "Workspace-scoped operation. Unsafe requests require X-CSRFToken. Reauthorize sources and revisions on every use.",
+        "operationId": "SourceIssues_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Workspace-ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceIssuesViewRequest"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceIssuesViewRequest"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceIssuesViewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceIssuesViewPostResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "pilot"
         ]
       }
     },

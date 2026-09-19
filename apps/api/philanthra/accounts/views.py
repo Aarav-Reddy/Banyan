@@ -109,6 +109,8 @@ class MembersView(APIView):
         role = request.data.get("role")
         if role not in {"administrator", "analyst", "editor", "viewer", "reviewer"}:
             raise ValidationError({"role": "Unsupported role."})
+        if role == "reviewer" and not request.user.is_staff:
+            raise PermissionDenied("Trusted reviewer provisioning requires a platform operator.")
         member.role = role
         member.save()
         return Response({"data": {"id": str(member.id), "role": role}, "meta": {}})
@@ -120,6 +122,8 @@ class InvitationsView(APIView):
         role = request.data.get("role", "viewer")
         if role not in {"analyst", "editor", "viewer", "reviewer"}:
             raise ValidationError({"role": "Unsupported invitation role."})
+        if role == "reviewer" and not request.user.is_staff:
+            raise PermissionDenied("Trusted reviewer invitations require a platform operator.")
         from django.core.validators import validate_email
 
         email = request.data.get("email", "")

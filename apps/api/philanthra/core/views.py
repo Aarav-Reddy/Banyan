@@ -222,11 +222,11 @@ class OrganizationDetailView(APIView):
         ]
         return ok(
             {
-                "organization": s.OrganizationSerializer(org).data,
+                "organization": s.OrganizationSerializer(org, context={"workspace": ws}).data,
                 "filings": s.FilingSerializer(filings, many=True).data,
                 "financial_signals": signals,
                 "programs": s.ProgramSerializer(programs, many=True).data,
-                "cards": s.CardSerializer(cards, many=True).data,
+                "cards": s.CardSerializer(cards, many=True, context={"workspace": ws}).data,
             }
         )
 
@@ -242,7 +242,9 @@ class CompareView(APIView):
             raise NotFound()
         return ok(
             {
-                "organizations": s.OrganizationSerializer(orgs, many=True).data,
+                "organizations": s.OrganizationSerializer(
+                    orgs, many=True, context={"workspace": workspace_for(request)}
+                ).data,
                 "caveats": [
                     "Compare matching fiscal periods and currencies; program spending is not impact.",
                     "Missing values remain unknown.",
@@ -309,6 +311,8 @@ class PortfolioDetailView(APIView):
             .order_by("id")
         )
         artifact = m.Artifact.objects.select_for_update().get(pk=pk)
+        if not can_artifact(artifact, ws):
+            raise NotFound()
         if request.data.get("revision") != artifact.revision:
             raise Conflict()
         portfolio = artifact.portfolio
@@ -369,7 +373,10 @@ class ProgramsView(APIView):
         if not ws.organization_id:
             raise ValidationError({"organization": "Verified workspace organization required."})
         source = get_object_or_404(
-            m.Source, id=request.data.get("source_id"), owner=ws, state="active"
+            m.Source.objects.select_for_update(),
+            id=request.data.get("source_id"),
+            owner=ws,
+            state="active",
         )
         fields = {
             k: request.data[k]
@@ -403,7 +410,9 @@ class ProgramDetailView(APIView):
     def patch(self, request, pk):
         ws = workspace_for(request, write=True)
         program = get_object_or_404(m.Program, pk=pk, owner=ws, source__state="active")
-        m.Source.objects.select_for_update().get(pk=program.source_id)
+        source = m.Source.objects.select_for_update().get(pk=program.source_id)
+        if source.state != "active":
+            raise NotFound()
         program = m.Program.objects.select_for_update().get(pk=program.pk)
         if request.data.get("revision") != program.revision:
             raise Conflict()
@@ -416,13 +425,18 @@ class ProgramDetailView(APIView):
                     "source_id": "Use a new scoped source to change cause or geography; grants cannot be broadened."
                 }
             )
+        if not isinstance(program.context, dict):
+            raise ValidationError({"context": "A context object is required; empty means unknown."})
         program.revision += 1
-        program.full_clean()
+        program.full_clean(exclude=["context"])
         program.save()
         # A profile update changes the source snapshot, invalidating previous claims.
         source = m.Source.objects.select_for_update().get(pk=program.source_id)
         source.revision += 1
         source.save()
+        from .services import source_revision_changed
+
+        source_revision_changed(source)
         m.Artifact.objects.filter(dependencies__source=source).update(status="invalidated")
         enqueue(
             ws,
@@ -559,6 +573,8 @@ class CardDetailView(APIView):
             .order_by("id")
         )
         artifact = m.Artifact.objects.select_for_update().get(pk=pk)
+        if not can_artifact(artifact, ws):
+            raise NotFound()
         if request.data.get("revision") != artifact.revision:
             raise Conflict()
         if "title" in request.data:
@@ -573,6 +589,39 @@ class CardDetailView(APIView):
         artifact.save()
         m.Alert.objects.filter(artifact=artifact).update(state="invalidated")
         return ok(s.CardSerializer(artifact, context={"workspace": ws}).data)
+
+
+class SourceIssuesView(APIView):
+    def get(self, request):
+        ws = workspace_for(request)
+        return listing(
+            request,
+            visible_artifacts(ws, kind="source_issue", user=request.user),
+            s.ArtifactSerializer,
+        )
+
+    def post(self, request):
+        ws = workspace_for(request, write=True)
+        source = source_or_404(request.data.get("source_id"), ws)
+        issue = str(request.data.get("issue", "")).strip()
+        if not issue or len(issue) > 4000:
+            raise ValidationError(
+                {"issue": "A substantive issue of at most 4,000 characters is required."}
+            )
+        artifact = create_artifact(
+            ws,
+            request.user,
+            kind="source_issue",
+            title=str(request.data.get("title", "Source issue for review"))[:240],
+            sources=[source],
+            payload={
+                "issue": issue,
+                "scope": "Review of source quality; approval is not an automatic source correction.",
+            },
+            cause=source.cause,
+            geography=source.geography,
+        )
+        return ok(s.ArtifactSerializer(artifact, context={"workspace": ws}).data, 201)
 
 
 class SourcesView(APIView):
@@ -667,6 +716,9 @@ class GrantDetailView(APIView):
         grant.active = False
         grant.revision += 1
         grant.save()
+        from philanthra.pilot.services import after_source_withdrawal
+
+        after_source_withdrawal(grant.source)
         ids = m.Dependency.objects.filter(source=grant.source).values_list("artifact_id", flat=True)
         m.Artifact.objects.filter(id__in=ids).update(status="invalidated")
         m.Alert.objects.filter(artifact_id__in=ids).update(state="invalidated")
@@ -823,7 +875,10 @@ class ReviewsView(APIView):
         rows = [
             a
             for a in m.Artifact.objects.filter(
-                status="pending_review", assignments__reviewer=request.user
+                status="approved"
+                if request.query_params.get("status") == "approved"
+                else "pending_review",
+                assignments__reviewer=request.user,
             ).distinct()
             if a.assignments.filter(reviewer=request.user, revision=a.revision).exists()
             and can_artifact(a, ws, user=request.user)
@@ -850,39 +905,17 @@ class ReviewDetailView(APIView):
 
 class GraphView(APIView):
     def get(self, request):
+        from .graph import graph_rows
+
         ws = workspace_for(request)
-        visible = {a.id: a for a in visible_artifacts(ws, user=request.user)}
-        edges = m.GraphEdge.objects.filter(artifact_id__in=visible).select_related(
-            "supporting_source"
-        )
         root = request.query_params.get("root")
-        if root:
-            edges = edges.filter(source_id=root) | edges.filter(target_id=root)
-        rows = [
-            {
-                "id": str(e.id),
-                "source_type": e.source_type,
-                "source_id": e.source_id,
-                "target_type": e.target_type,
-                "target_id": e.target_id,
-                "relation": e.relation,
-                "artifact_id": str(e.artifact_id),
-                "supporting_source_id": str(e.supporting_source_id),
-            }
-            for e in edges[:100]
-            if can_source(
-                e.supporting_source,
-                ws,
-                visible[e.artifact_id].purpose,
-                visible[e.artifact_id].cause,
-                visible[e.artifact_id].geography,
-            )
-        ]
+        if root and len(root) > 160:
+            raise ValidationError({"root": "A bounded entity identifier is required."})
         return ok(
             {
-                "edges": rows,
+                "edges": graph_rows(ws, request.user, root),
                 "limit": 100,
-                "note": "Only currently authorized source-backed relationships.",
+                "note": "One-hop, source-backed relationships; at most100 edges. Planning funder edges are proposals, not completed grants. No private totals or inferred effectiveness.",
             }
         )
 
@@ -1057,7 +1090,9 @@ class ImportDetailView(APIView):
     def patch(self, request, pk):
         ws = workspace_for(request, write=True)
         batch = get_object_or_404(m.ImportBatch, pk=pk, owner=ws, source__state="active")
-        m.Source.objects.select_for_update().get(pk=batch.source_id)
+        source = m.Source.objects.select_for_update().get(pk=batch.source_id)
+        if source.state != "active":
+            raise NotFound()
         batch = m.ImportBatch.objects.select_for_update().get(pk=batch.pk)
         if batch.status in {"completed", "expired"}:
             raise Conflict("Committed imports are immutable.")
@@ -1070,6 +1105,9 @@ class ImportDetailView(APIView):
         source = m.Source.objects.select_for_update().get(pk=batch.source_id)
         source.revision += 1
         source.save()
+        from .services import source_revision_changed
+
+        source_revision_changed(source)
         job = enqueue(
             ws,
             "parse_import",
@@ -1081,9 +1119,13 @@ class ImportDetailView(APIView):
 
 
 class ImportCommitView(APIView):
+    @transaction.atomic
     def post(self, request, pk):
         ws = workspace_for(request, write=True)
         batch = get_object_or_404(m.ImportBatch, pk=pk, owner=ws, source__state="active")
+        source = m.Source.objects.select_for_update().get(pk=batch.source_id)
+        if source.state != "active":
+            raise NotFound()
         if batch.status == "completed":
             return ok(s.ImportSerializer(batch).data)
         if batch.status != "validated":
@@ -1120,7 +1162,7 @@ class OpportunitiesView(APIView):
         program = list(m.Program.objects.filter(owner=ws))
         rows = []
         for o in m.Opportunity.objects.select_related("source").order_by("deadline"):
-            if not can_source(o.source, ws, "donor_access", o.program.cause, o.program.geography):
+            if not can_source(o.source, ws, "donor_access", o.cause, o.geography):
                 continue
             matched = any(p.cause == o.cause and p.geography == o.geography for p in program)
             rows.append(
@@ -1199,6 +1241,14 @@ class DashboardView(APIView):
             checklist.append(
                 "Import aggregate outcomes with explicit definitions and follow-up periods."
             )
+        if any(o.numerator is None for o in observations):
+            checklist.append(
+                "Collect missing outcome counts (numerators); no improvement rate is available without them."
+            )
+        if any(not o.outcome.definition.strip() for o in observations):
+            checklist.append("Define the outcome before interpreting or comparing observations.")
+        if any(not o.followup_months for o in observations):
+            checklist.append("Record follow-up periods for comparable outcome interpretation.")
         if any(o.denominator is None for o in observations):
             checklist.append("Collect missing denominators before rate comparisons or pooling.")
         if any(not o.independent for o in observations):
@@ -1300,7 +1350,41 @@ METRICS = {
 class MetricsView(APIView):
     def get(self, request):
         ws = workspace_for(request)
-        events = list(m.PilotEvent.objects.filter(owner=ws))
+        events = list(m.PilotEvent.objects.filter(owner=ws).order_by("created_at", "id"))
+        if request.query_params.get("format") == "csv":
+            from philanthra.ingestion import safe_csv
+
+            columns = [
+                "metric",
+                "definition",
+                "value",
+                "denominator",
+                "period_start",
+                "period_end",
+                "collection_method",
+                "source_kind",
+                "ground_truth",
+            ]
+            rows = [
+                {
+                    "metric": e.metric,
+                    "definition": METRICS[e.metric],
+                    "value": str(e.value),
+                    "denominator": str(e.denominator) if e.denominator is not None else "",
+                    "period_start": e.period_start,
+                    "period_end": e.period_end,
+                    "collection_method": e.collection_method,
+                    "source_kind": e.source_kind,
+                    "ground_truth": "Fictional demo event; not traction"
+                    if e.source_kind == "synthetic_demo"
+                    else "Self-reported; not independently verified or causally attributed",
+                }
+                for e in events
+            ]
+            audit(ws, request.user, "metrics.exported", ws.id)
+            response = HttpResponse(safe_csv(rows, columns), content_type="text/csv")
+            response["Content-Disposition"] = 'attachment; filename="philanthra-pilot-metrics.csv"'
+            return response
         return ok(
             {
                 "opted_in": ws.metrics_opt_in,
@@ -1355,8 +1439,32 @@ class MetricsView(APIView):
             raise ValidationError(
                 {"collection_method": "Describe actual collection and ground truth."}
             )
-        event = m.PilotEvent(owner=ws, **fields)
-        event.full_clean()
+        from django.conf import settings
+
+        event = m.PilotEvent(
+            owner=ws,
+            source_kind="synthetic_demo" if settings.DEMO_MODE else "ngo_contributed",
+            **fields,
+        )
+        event.full_clean(exclude=["denominator"] if event.denominator is None else [])
+        if event.period_start > event.period_end:
+            raise ValidationError({"period_end": "Must be on or after the period start."})
+        if event.denominator is not None and event.denominator <= 0:
+            raise ValidationError({"denominator": "A supplied denominator must be positive."})
+        if event.metric != "outcome_change" and event.value < 0:
+            raise ValidationError({"value": "This measure requires a nonnegative value."})
+        if event.metric in {
+            "overlooked_grants",
+            "high_need_funding",
+            "alert_usefulness",
+            "insight_adoption",
+            "data_quality_improvement",
+            "continuing_contributors",
+        }:
+            if event.denominator is None or event.value > event.denominator:
+                raise ValidationError(
+                    {"denominator": "Provide a positive total at least as large as the numerator."}
+                )
         event.save()
         return ok({"id": str(event.id)}, 201)
 

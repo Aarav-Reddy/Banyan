@@ -13,6 +13,20 @@ def ready(request):
     try:
         with connection.cursor() as cursor:
             cursor.execute("SELECT 1")
+        from django.db.migrations.executor import MigrationExecutor
+
+        executor = MigrationExecutor(connection)
+        if executor.migration_plan(executor.loader.graph.leaf_nodes()):
+            return JsonResponse(
+                {
+                    "error": {
+                        "code": "migrations_pending",
+                        "message": "Apply migrations before serving",
+                        "fields": {},
+                    }
+                },
+                status=503,
+            )
         return JsonResponse({"data": {"status": "ready"}})
     except Exception:
         return JsonResponse(

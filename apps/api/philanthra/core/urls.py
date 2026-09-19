@@ -30,6 +30,7 @@ urlpatterns = [
     path("programs/<uuid:pk>/", v.ProgramDetailView.as_view()),
     path("cards/", v.CardsView.as_view()),
     path("cards/<uuid:pk>/", v.CardDetailView.as_view()),
+    path("source-issues/", v.SourceIssuesView.as_view()),
     path("sources/", v.SourcesView.as_view()),
     path("sources/<uuid:pk>/", v.SourceDetailView.as_view()),
     path("sources/<uuid:pk>/withdraw/", v.WithdrawView.as_view()),

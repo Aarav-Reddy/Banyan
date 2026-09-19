@@ -22,6 +22,16 @@ import {
   text,
 } from "./ui";
 import { useWorkspace } from "./application";
+import {
+  WorkspaceProfile,
+  CreateWorkspace,
+  IdentityClaims,
+  ContactConsent,
+  IntroductionInbox,
+  IdentityProof,
+  Attributions,
+  SourceIssues,
+} from "./pilot";
 export function Analyses() {
   const [version, setVersion] = useState(0),
     [result, setResult] = useState<Row | null>(null);
@@ -125,6 +135,7 @@ export function Analyses() {
       {result && (
         <Panel title="Latest calculation">
           <AnalysisResult payload={result.payload} />
+          <Attributions artifact={result} />
         </Panel>
       )}
       <State data={data} error={error}>
@@ -143,6 +154,7 @@ export function Analyses() {
                 onSaved={() => setVersion(version + 1)}
               />
             )}
+            <Attributions artifact={a} />
             <Sources sources={a.sources} />
           </Panel>
         ))}
@@ -733,6 +745,7 @@ export function SourcesPage({ id }: { id?: string }) {
             </Panel>
           ))}
       </State>
+      <SourceIssues sourceId={id} />
     </>
   );
 }
@@ -746,6 +759,11 @@ export function Settings() {
       <Header title="Workspace settings.">
         {ws.name} · Your role: {label(ws.role)}
       </Header>
+      <WorkspaceProfile />
+      <IdentityClaims />
+      {["owner", "administrator"].includes(ws.role) && <ContactConsent />}
+      <IntroductionInbox />
+      <CreateWorkspace />
       <Panel title="Members & roles">
         <State data={data} error={error}>
           {data?.map((m) => (
@@ -842,8 +860,13 @@ export function Settings() {
   );
 }
 export function Reviews() {
-  const [version, setVersion] = useState(0);
-  const { data, error } = useResource<Row[]>("reviews/", version);
+  const [version, setVersion] = useState(0),
+    [status, setStatus] = useState("pending");
+  const approved = status === "approved";
+  const { data, error } = useResource<Row[]>(
+    approved ? "reviews/?status=approved" : "reviews/",
+    version,
+  );
   return (
     <>
       <Header
@@ -857,6 +880,21 @@ export function Reviews() {
         Demo approvals demonstrate the workflow; they are not real expert
         endorsements. Changed or withdrawn inputs invalidate approval.
       </Notice>
+      <div className="segmented no-print" aria-label="Review queue">
+        <button aria-pressed={!approved} onClick={() => setStatus("pending")}>
+          Pending
+        </button>
+        <button aria-pressed={approved} onClick={() => setStatus("approved")}>
+          Approved
+        </button>
+      </div>
+      {approved && (
+        <Notice>
+          Inspect your assigned approved revisions. Withdraw an approval only
+          with a recorded reason; the exact current revision is checked again
+          when you submit.
+        </Notice>
+      )}
       <State data={data} error={error}>
         {data?.map((a) => (
           <Panel key={a.id} title={a.title} aside={<Badge>{a.kind}</Badge>}>
@@ -870,14 +908,23 @@ export function Reviews() {
             >
               Inspect complete artifact →
             </Link>
+            <Attributions artifact={a} />
             <Sources sources={a.sources} />
+            {a.kind === "identity_claim" && <IdentityProof id={a.id} />}
+            {!["card", "analysis", "identity_claim"].includes(a.kind) && (
+              <Details data={a.payload} />
+            )}
             {a.kind === "analysis" && <AnalysisResult payload={a.payload} />}
             <Form
-              submit="Record review decision"
+              submit={
+                approved
+                  ? "Withdraw approved revision"
+                  : "Record review decision"
+              }
               onSubmit={async (f) => {
                 await mutate(`reviews/${a.id}/`, "POST", {
                   revision: a.revision,
-                  decision: text(f, "decision"),
+                  decision: approved ? "withdrawn" : text(f, "decision"),
                   reason: text(f, "reason"),
                 });
                 setVersion(version + 1);
@@ -885,10 +932,18 @@ export function Reviews() {
             >
               <Field label="Decision" name="decision">
                 <select name="decision">
-                  <option value="changes_requested">Request changes</option>
-                  <option value="approved">Approve this revision</option>
-                  <option value="rejected">Reject</option>
-                  <option value="withdrawn">Withdraw</option>
+                  {approved ? (
+                    <option value="withdrawn">
+                      Withdraw this approved revision
+                    </option>
+                  ) : (
+                    <>
+                      <option value="changes_requested">Request changes</option>
+                      <option value="approved">Approve this revision</option>
+                      <option value="rejected">Reject</option>
+                      <option value="withdrawn">Withdraw</option>
+                    </>
+                  )}
                 </select>
               </Field>
               <Textarea
@@ -900,7 +955,13 @@ export function Reviews() {
           </Panel>
         ))}
         {data?.length === 0 && (
-          <Empty title="No assigned reviews pending">
+          <Empty
+            title={
+              approved
+                ? "No assigned approved revisions"
+                : "No assigned reviews pending"
+            }
+          >
             Only explicit, current assignments grant scoped reviewer access.
             Ordinary administration does not expose private NGO records.
           </Empty>
@@ -914,7 +975,18 @@ export function Metrics() {
   const { data, error } = useResource("metrics/", version);
   return (
     <>
-      <Header title="Measure the pilot honestly.">
+      <Header
+        title="Measure the pilot honestly."
+        action={
+          <Action
+            run={() =>
+              download("metrics/?format=csv", "philanthra-pilot-metrics.csv")
+            }
+          >
+            Export pilot metrics CSV
+          </Action>
+        }
+      >
         Optional, workspace-scoped reporting. Actual funding and learning
         outcomes need human evidence.
       </Header>
@@ -1120,6 +1192,7 @@ export function Report({ id }: { id: string }) {
                   budget: money(data.portfolio.budget_cents, true),
                   unallocated: money(data.portfolio.unallocated_cents, true),
                   method: data.method_version,
+                  planning_inputs: data.portfolio.constraints,
                 }}
               />
               <div className="table-wrap">
@@ -1143,6 +1216,11 @@ export function Report({ id }: { id: string }) {
                 </table>
               </div>
             </Panel>
+          ) : data.kind !== "card" ? (
+            <Panel title="Artifact details">
+              <Details data={data.payload} />
+              {data.kind === "identity_claim" && <IdentityProof id={id} />}
+            </Panel>
           ) : (
             <Panel title="Evidence summary">
               <p>{data.payload.summary || "No summary reported."}</p>
@@ -1162,6 +1240,7 @@ export function Report({ id }: { id: string }) {
               }}
             />
           </Panel>
+          <Attributions artifact={data} />
           <Sources sources={data.sources} />
         </>
       )}

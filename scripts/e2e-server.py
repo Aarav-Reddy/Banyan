@@ -68,7 +68,10 @@ def proxy_handler(api_port, web_port):
                 self.send_header("Content-Length", str(len(data)))
                 self.end_headers()
                 if self.command != "HEAD":
-                    self.wfile.write(data)
+                    try:
+                        self.wfile.write(data)
+                    except (BrokenPipeError, ConnectionResetError):
+                        pass  # Browser navigated away; response was already produced.
             finally:
                 connection.close()
 

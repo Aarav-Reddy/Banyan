@@ -54,6 +54,7 @@ def match_transfer(profile: dict, cards: list[dict]) -> dict:
         matches.append(
             {
                 "id": str(card.get("id", "")),
+                "title": str(card.get("title") or "Untitled intervention record"),
                 "source_ids": source_ids([card]),
                 "similarities": similarities,
                 "differences": differences,

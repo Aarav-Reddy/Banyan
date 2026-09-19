@@ -76,6 +76,7 @@ class ProgramSerializer(serializers.ModelSerializer):
 class OrganizationSerializer(serializers.ModelSerializer):
     service_areas = serializers.SerializerMethodField()
     latest_filing = serializers.SerializerMethodField()
+    discovery_summary = serializers.SerializerMethodField()
 
     class Meta:
         model = m.Organization
@@ -93,6 +94,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             "capacity_note",
             "service_areas",
             "latest_filing",
+            "discovery_summary",
         ]
 
     def get_service_areas(self, obj) -> list[dict]:
@@ -116,6 +118,47 @@ class OrganizationSerializer(serializers.ModelSerializer):
                 geography__source__state="active",
             )
         ]
+
+    def get_discovery_summary(self, obj) -> dict:
+        from django.conf import settings
+        from django.utils import timezone
+
+        from philanthra.analytics.finance import financial_signals
+
+        from .policy import visible_artifacts
+        from .services import filing_input
+
+        filings = list(
+            obj.filings.filter(
+                active=True, source__owner__isnull=True, source__state="active"
+            ).select_related("source")
+        )
+        signals = financial_signals(
+            [filing_input(f) for f in filings],
+            as_of="2026-09-01" if settings.DEMO_MODE else timezone.now().date().isoformat(),
+        )
+        last = signals["periods"][-1] if signals["periods"] else None
+        workspace = self.context.get("workspace")
+        if "approved_cards" not in self.context:
+            self.context["approved_cards"] = (
+                [a for a in visible_artifacts(workspace, kind="card") if a.status == "approved"]
+                if workspace
+                else []
+            )
+        cards = [
+            a for a in self.context["approved_cards"] if a.card.program.organization_id == obj.id
+        ]
+        return {
+            "program_spending_share": last["metrics"]["program_spending_share"]
+            if last
+            else {"value": None, "reason": "No comparable financial filing available"},
+            "approved_evidence_cards": len(cards),
+            "evidence_caveat": "Editorial review is not validation of effectiveness; unknown or unshared evidence is absent from this count.",
+            "financial_flags": [s for s in signals["signals"] if s["state"] == "flag"],
+            "missing_fields": last["missing_fields"] if last else ["financial_history"],
+            "method_version": signals["method_version"],
+            "source_ids": signals["source_ids"],
+        }
 
     @extend_schema_field(FilingSerializer(allow_null=True))
     def get_latest_filing(self, obj):
@@ -210,6 +253,8 @@ class PortfolioSerializer(ArtifactSerializer):
         fields = ArtifactSerializer.Meta.fields + ["portfolio"]
 
     def get_portfolio(self, obj) -> dict:
+        from .coverage import geographic_coverage
+
         p = obj.portfolio
         return {
             "id": str(p.id),
@@ -217,6 +262,7 @@ class PortfolioSerializer(ArtifactSerializer):
             "currency": p.currency,
             "constraints": p.constraints,
             "unallocated_cents": p.unallocated_cents,
+            "geographic_coverage": geographic_coverage(p),
             "allocations": [
                 {
                     "id": str(a.id),

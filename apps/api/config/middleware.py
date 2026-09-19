@@ -1,3 +1,4 @@
+import logging
 import uuid
 
 from django.http import JsonResponse
@@ -27,4 +28,12 @@ class RequestMetadataMiddleware:
         response["Cache-Control"] = "private, no-store"
         response["X-Content-Type-Options"] = "nosniff"
         response["X-Frame-Options"] = "DENY"
+        logging.getLogger("philanthra.requests").info(
+            "request_completed",
+            extra={
+                "request_id": request.correlation_id,
+                "status": response.status_code,
+                "method": request.method,
+            },
+        )
         return response
