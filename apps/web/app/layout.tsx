@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 export const metadata: Metadata = {
-  title: "Philanthra — Evidence for better giving",
+  title: "Philanthra — Nonprofit research and shared evidence",
   description:
-    "Connect funding decisions with permissioned nonprofit learning.",
+    "Research nonprofit finances, plan funding, and learn from permissioned program evidence.",
 };
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState, createContext, useContext } from "react";
+import { useEffect, useState, useRef, createContext, useContext } from "react";
 import { useRouter } from "next/navigation";
 import {
   Session,
@@ -11,7 +11,16 @@ import {
   mutate,
   label,
 } from "@/lib/api";
-import { Form, Field, Notice, Header, Panel, text } from "./ui";
+import {
+  Form,
+  Field,
+  Notice,
+  Header,
+  Panel,
+  Icon,
+  PrintSupport,
+  text,
+} from "./ui";
 import {
   Discovery,
   Organization,
@@ -66,6 +75,24 @@ export function Application({ path }: { path: string[] }) {
     [selected, setSelected] = useState(""),
     [menu, setMenu] = useState(false);
   const router = useRouter();
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!menu) return;
+    closeButton.current?.focus();
+    function escape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setMenu(false);
+        menuButton.current?.focus();
+      }
+    }
+    window.addEventListener("keydown", escape);
+    return () => window.removeEventListener("keydown", escape);
+  }, [menu]);
+  function closeMenu() {
+    setMenu(false);
+    menuButton.current?.focus();
+  }
   useEffect(() => {
     api<Session>("session/")
       .then((s) => {
@@ -136,7 +163,7 @@ export function Application({ path }: { path: string[] }) {
             ◈ Philanthra
           </Link>
           <nav>
-            <Link href="/methodology">Our methodology</Link>
+            <Link href="/methodology">Methodology</Link>
             {session.user ? (
               <Link className="button primary" href="/discover">
                 Open workspace →
@@ -166,7 +193,7 @@ export function Application({ path }: { path: string[] }) {
         )}
         <footer className="public-footer">
           Philanthra · Baltimore food security pilot{" "}
-          <span>Evidence with context. Decisions with care.</span>
+          <span>Financial context · Permissioned program evidence</span>
         </footer>
       </div>
     );
@@ -181,28 +208,64 @@ export function Application({ path }: { path: string[] }) {
       </main>
     );
   const donor = ws.kind === "foundation";
-  const items = [
-    ...(donor
-      ? [
-          ["discover", "◎", "Discover organizations"],
-          ["portfolios", "▤", "Saved portfolios"],
-          ["allocate", "↗", "Allocation workbench"],
-        ]
-      : [
-          ["dashboard", "▦", "Overview"],
-          ["programs", "▤", "Programs"],
-          ["uploads", "↑", "Data & uploads"],
-        ]),
-    ["evidence", "◇", "Evidence library"],
-    ["saved", "▤", "Saved evidence"],
-    ["watchlist", "◎", "Watchlist"],
-    ...(!donor ? [["impact-report", "▤", "Impact report"]] : []),
-    ["analyses", "◫", "Pooled analysis"],
-    ["graph", "⌘", "Knowledge graph"],
-    ...(!donor ? [["opportunities", "↗", "Funding opportunities"]] : []),
-    ["alerts", "◷", "Alerts"],
-    ...(ws.role === "reviewer" ? [["reviews", "✓", "Review workbench"]] : []),
+  const groups = [
+    {
+      title: donor ? "Funding work" : "Your programs & data",
+      items: donor
+        ? [
+            ["discover", "organizations", "Organizations"],
+            ["portfolios", "plans", "Funding plans"],
+            ["allocate", "plan", "Plan funding"],
+          ]
+        : [
+            ["dashboard", "overview", "Overview"],
+            ["programs", "programs", "Programs"],
+            ["uploads", "upload", "Data uploads"],
+            ["impact-report", "report", "Impact report"],
+          ],
+    },
+    {
+      title: donor ? "Shared evidence" : "Learning & funding",
+      items: [
+        ["evidence", "evidence", "Evidence library"],
+        ["saved", "saved", "Saved evidence"],
+        ["analyses", "analysis", "Combined analysis"],
+        ["graph", "connections", "Connections"],
+        ...(!donor ? [["opportunities", "plan", "Funding opportunities"]] : []),
+      ],
+    },
+    {
+      title: "Monitoring",
+      items: [
+        ["watchlist", "watch", "Watchlist"],
+        ["alerts", "alerts", "Alerts"],
+        ...(ws.role === "reviewer" ? [["reviews", "review", "Reviews"]] : []),
+      ],
+    },
   ];
+  const pageLabels: Record<string, string> = {
+    discover: "Organizations",
+    organizations: "Organization profile",
+    compare: "Compare organizations",
+    allocate: "Plan funding",
+    portfolios: "Funding plans",
+    uploads: "Data uploads",
+    analyses: "Combined analysis",
+    graph: "Connections",
+    dashboard: "Overview",
+    saved: "Saved evidence",
+    evidence: "Evidence library",
+    sharing: "Sharing & privacy",
+    settings: "Workspace settings",
+    reports: "Report",
+    admin: "Data-use activity",
+    audit: "Data-use activity",
+    jobs: "Background jobs",
+    metrics: "Pilot measurement",
+    reviews: "Reviews",
+    "impact-report": "Impact report",
+    opportunities: "Funding opportunities",
+  };
   let content: React.ReactNode;
   switch (page) {
     case "saved":
@@ -298,42 +361,81 @@ export function Application({ path }: { path: string[] }) {
     default:
       content = (
         <Header title="Page not found">
-          <Link href="/discover">Return to discovery</Link>
+          <Link href="/discover">Return to organizations</Link>
         </Header>
       );
   }
   return (
     <WorkspaceContext.Provider value={ws}>
+      <PrintSupport />
       <a href="#main" className="skip-link">
         Skip to content
       </a>
       <div className="app-shell">
-        <aside className={`sidebar ${menu ? "open" : ""}`}>
-          <Link className="brand" href={donor ? "/discover" : "/dashboard"}>
-            <span>◈</span> Philanthra
-          </Link>
-          <p className="nav-label">
+        <aside
+          id="workspace-navigation"
+          className={`sidebar ${menu ? "open" : ""}`}
+        >
+          <div className="sidebar-brand">
+            <Link className="brand" href={donor ? "/discover" : "/dashboard"}>
+              <span aria-hidden="true">◈</span> Philanthra
+            </Link>
+            <button
+              type="button"
+              ref={closeButton}
+              className="mobile-close secondary"
+              onClick={closeMenu}
+              aria-label="Close navigation"
+            >
+              <Icon name="close" /> Close
+            </button>
+          </div>
+          <p className="workspace-kind">
             {donor ? "Foundation workspace" : "Contributor workspace"}
           </p>
           <nav aria-label="Main navigation">
-            {items.map(([href, icon, name]) => (
-              <Link
-                key={href}
-                href={`/${href}`}
-                onClick={() => setMenu(false)}
-                aria-current={page === href ? "page" : undefined}
-              >
-                <span aria-hidden="true">{icon}</span>
-                {name}
-              </Link>
+            {groups.map((group) => (
+              <div className="nav-group" key={group.title}>
+                <p className="nav-label">{group.title}</p>
+                {group.items.map(([href, icon, name]) => (
+                  <Link
+                    key={href}
+                    href={`/${href}`}
+                    onClick={() => {
+                      if (menu) closeMenu();
+                    }}
+                    aria-current={page === href ? "page" : undefined}
+                  >
+                    <Icon name={icon} />
+                    {name}
+                  </Link>
+                ))}
+              </div>
             ))}
           </nav>
           <div className="sidebar-bottom">
-            <Link href="/sharing">◉ Sharing & privacy</Link>
-            <Link href="/settings">⚙ Workspace settings</Link>
-            <Link href="/methodology">ⓘ Methodology</Link>
+            <nav aria-label="Workspace utilities">
+              <p className="nav-label">Workspace</p>
+              {[
+                ["sharing", "privacy", "Sharing & privacy"],
+                ["settings", "settings", "Settings"],
+                ["methodology", "info", "Methodology"],
+              ].map(([href, icon, name]) => (
+                <Link
+                  key={href}
+                  href={`/${href}`}
+                  aria-current={page === href ? "page" : undefined}
+                  onClick={() => {
+                    if (menu) closeMenu();
+                  }}
+                >
+                  <Icon name={icon} />
+                  {name}
+                </Link>
+              ))}
+            </nav>
             <div className="mode-note">
-              <span className="dot" /> Deterministic engine
+              Deterministic calculations
               <br />
               <small>Works without an AI provider</small>
             </div>
@@ -342,18 +444,19 @@ export function Application({ path }: { path: string[] }) {
         <div className="main-shell">
           <header className="topbar">
             <button
-              className="mobile-menu"
-              onClick={() => setMenu(!menu)}
-              aria-label="Toggle navigation"
+              type="button"
+              ref={menuButton}
+              className="mobile-menu secondary"
+              onClick={() => (menu ? closeMenu() : setMenu(true))}
+              aria-label={menu ? "Close navigation" : "Open navigation"}
               aria-expanded={menu}
+              aria-controls="workspace-navigation"
             >
-              ☰
+              <Icon name={menu ? "close" : "menu"} /> Menu
             </button>
-            <div className="breadcrumbs">
-              Workspace <span>/</span> {label(page)}
-            </div>
+            <div className="breadcrumbs">{pageLabels[page] || label(page)}</div>
             <div className="workspace-controls">
-              <label className="sr-only" htmlFor="workspace">
+              <label className="workspace-caption" htmlFor="workspace">
                 Active workspace
               </label>
               <select
@@ -393,21 +496,22 @@ export function Application({ path }: { path: string[] }) {
           </header>
           {session.demo_mode && (
             <div className="demo-banner">
-              <span>DEMO ENVIRONMENT</span> Fictional nonprofit organizations
-              and synthetic program evidence. Public context is labeled
-              separately. No money is moved.
+              <strong>Demo environment.</strong> Fictional nonprofit
+              organizations and synthetic program evidence. Public context is
+              labeled separately. No money is moved.
             </div>
           )}
           {error && <Notice tone="error">{error}</Notice>}
           <main
             id="main"
+            tabIndex={-1}
             className="workspace-main"
             key={selected + path.join("/")}
           >
             {content}
           </main>
           <footer className="app-footer">
-            <span>Built for thoughtful decisions, informed by evidence.</span>
+            <span>Baltimore food security pilot</span>
             <Link href="/sources">Source registry</Link>
             <Link href="/metrics">Pilot measurement</Link>
           </footer>
@@ -419,79 +523,60 @@ export function Application({ path }: { path: string[] }) {
 function Landing({ demo }: { demo: boolean }) {
   return (
     <main className="landing">
-      <div className="hero">
-        <div>
-          <p className="eyebrow">A shared foundation for better decisions</p>
-          <h1>
-            Better giving starts
-            <br />
-            with better evidence.
-          </h1>
-          <p className="hero-description">
-            Connect where funding is needed with what nonprofits are learning.
-            Explore financial context, learn from shared evidence, and plan your
-            next step with care.
+      <section className="hero">
+        <p className="eyebrow">Baltimore food security pilot</p>
+        <h1>Research nonprofits and learn from shared evidence.</h1>
+        <p className="hero-description">
+          Compare nonprofit finances and plan funding. Share program evidence
+          and learn from other nonprofits.
+        </p>
+        <div className="actions">
+          <Link className="button primary" href={demo ? "/demo" : "/login"}>
+            {demo ? "Explore the demo" : "Open your workspace"}{" "}
+            <span aria-hidden="true">→</span>
+          </Link>
+          <Link className="button secondary" href="/methodology">
+            Read the methodology
+          </Link>
+        </div>
+        {demo && (
+          <p className="pilot-disclosure">
+            Demo organizations and program evidence are fictional. Public
+            context is labeled separately. No money moves.
           </p>
-          <div className="actions">
-            <Link className="button primary" href={demo ? "/demo" : "/login"}>
-              {demo ? "Explore the pilot" : "Open your workspace"} →
-            </Link>
-            <Link className="button secondary" href="/methodology">
-              How Philanthra works
-            </Link>
-          </div>
+        )}
+      </section>
+      <section
+        className="audience-paths"
+        aria-label="Two ways to use Philanthra"
+      >
+        <article>
+          <p className="eyebrow">For foundations</p>
+          <h2>Investigate a funding decision</h2>
+          <ol>
+            <li>Find organizations by cause and reported service area.</li>
+            <li>Compare finances, evidence and missing information.</li>
+            <li>Prepare a funding plan for human review.</li>
+          </ol>
           <p className="fine">
-            Starting with food security in the Baltimore region.
-          </p>
-        </div>
-        <div
-          className="hero-visual"
-          aria-label="Philanthra connects organizations, context, evidence and funding"
-        >
-          <div className="visual-label">THE SHARED PICTURE</div>
-          <div className="orbit">
-            <div className="orbit-center">
-              ◈<strong>Philanthra</strong>
-              <small>Evidence in context</small>
-            </div>
-            <span className="orbit-node n1">◎ Organizations</span>
-            <span className="orbit-node n2">◇ Program evidence</span>
-            <span className="orbit-node n3">◫ Community context</span>
-            <span className="orbit-node n4">↗ Funding decisions</span>
-          </div>
-          <p>
-            Every insight has a source.
-            <br />
-            Every decision stays human.
-          </p>
-        </div>
-      </div>
-      <div className="landing-columns">
-        <article>
-          <span className="step">01 / FOR FOUNDATIONS</span>
-          <h2>Find where to investigate.</h2>
-          <p>
-            Compare organizations, understand financial warning signals, and
-            create transparent funding plans for human review.
+            Financial warning signals guide investigation. They do not predict
+            failure or measure impact.
           </p>
         </article>
         <article>
-          <span className="step">02 / FOR NONPROFITS</span>
-          <h2>Learn before you act.</h2>
-          <p>
-            Contribute aggregate program evidence, explore lessons from peers,
-            and control exactly how your data are shared.
+          <p className="eyebrow">For nonprofits</p>
+          <h2>Learn from program experience</h2>
+          <ol>
+            <li>Describe your programs and upload aggregate data.</li>
+            <li>Read shared evidence, including limitations and failures.</li>
+            <li>Choose how your evidence is shared.</li>
+          </ol>
+          <p className="fine">
+            Context matches are questions to investigate, not endorsements or
+            proof an intervention will transfer.
           </p>
         </article>
-        <article>
-          <span className="step">03 / FOR SHARED LEARNING</span>
-          <h2>See the wider picture.</h2>
-          <p>
-            Bring compatible observations together. Keep context, missing
-            information, and uncertainty visible.
-          </p>
-        </article>
-      </div>
+      </section>
     </main>
   );
 }
@@ -507,15 +592,12 @@ function Login({
   return (
     <main className="login-layout">
       <div>
-        <p className="eyebrow">Welcome to Philanthra</p>
-        <h1>
-          Good decisions.
-          <br />
-          Shared knowledge.
-        </h1>
+        <p className="eyebrow">Baltimore food security pilot</p>
+        <h1>{join ? "Join a workspace" : "Sign in to Philanthra"}</h1>
         <p>
-          Choose a workspace to investigate funding or turn program experience
-          into useful evidence.
+          {join
+            ? "Use your invitation token to join the workspace that invited you."
+            : "Open your foundation or nonprofit workspace to continue your research."}
         </p>
         {demo && (
           <Notice>
@@ -572,10 +654,11 @@ function Login({
         )}
         {demo && !join && (
           <div className="demo-roles">
-            <p className="eyebrow">Or enter as a demo role</p>
+            <h3>Explore with a demo role</h3>
+            <p className="fine">Choose a role to try the existing workflows.</p>
             {[
               ["foundation-admin", "Foundation administrator"],
-              ["ngo-owner", "NGO owner"],
+              ["ngo-owner", "Nonprofit owner"],
               ["reviewer", "Assigned reviewer"],
               ["foundation-viewer", "Read-only foundation viewer"],
             ].map(([user, caption]) => (
