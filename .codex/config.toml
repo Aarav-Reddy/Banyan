@@ -1,0 +1,11 @@
+model = "gpt-6-astra"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+web_search = "live"
+
+[agents]
+enabled = true
+max_concurrent_threads_per_session = 4
+default_subagent_model = "gpt-6-astra"
+default_subagent_reasoning_effort = "high"
