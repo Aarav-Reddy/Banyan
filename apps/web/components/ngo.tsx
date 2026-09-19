@@ -43,38 +43,38 @@ export function Dashboard() {
   return (
     <>
       <Header
-        eyebrow="Nonprofit / Contributor workspace"
-        title="Turn experience into shared learning."
+        title="Overview"
         action={
           <Link className="button primary" href="/uploads">
-            Contribute program data ↑
+            Upload program data
           </Link>
         }
       >
-        A clear picture of your programs, the evidence you hold, and what to
-        investigate next.
+        Manage your programs, review data quality, and explore shared evidence.
       </Header>
       <State data={data} error={error}>
         {data && (
           <>
-            <div className="summary-strip">
-              <div>
-                <small>Active programs</small>
-                <strong>{data.programs.length}</strong>
-              </div>
-              <div>
-                <small>Aggregate observations</small>
-                <strong>{data.observation_count}</strong>
-              </div>
-              <div>
-                <small>Contributor access</small>
-                <strong>Core tools · Free</strong>
-              </div>
+            <div className="workspace-summary">
+              <dl className="record-metadata">
+                <div>
+                  <dt>Active programs</dt>
+                  <dd>{data.programs.length}</dd>
+                </div>
+                <div>
+                  <dt>Aggregate observations</dt>
+                  <dd>{data.observation_count}</dd>
+                </div>
+              </dl>
+              <p className="access-note">
+                Contributor access · Core tools are free
+              </p>
             </div>
             <div className="two-columns">
               <Panel
                 title="Your program inventory"
-                aside={<Link href="/programs/new">Add program +</Link>}
+                variant="open"
+                aside={<Link href="/programs/new">Add program</Link>}
               >
                 {data.programs.map((p: Row) => (
                   <div className="list-row" key={p.id}>
@@ -91,7 +91,7 @@ export function Dashboard() {
                   <Empty title="Describe your first program" />
                 )}
               </Panel>
-              <Panel title="Improve the evidence picture">
+              <Panel title="Data quality">
                 {data.data_quality.length ? (
                   <ul className="checklist">
                     {data.data_quality.map((s: string) => (
@@ -107,14 +107,13 @@ export function Dashboard() {
                 <Link href="/uploads">Review data & validation →</Link>
               </Panel>
             </div>
-            <Benchmark />
-            <Panel title="Ideas to investigate">
+            <Panel title="Evidence to investigate" variant="open">
               <p className="fine">
                 Context-based transfer suggestions. Evidence strength,
                 differences, and missing information remain separate.
               </p>
               {recommendations?.map((r) => (
-                <div key={r.program_id}>
+                <div className="program-matches" key={r.program_id}>
                   <h3>{r.program_name}</h3>
                   {r.matches.matches?.length ? (
                     r.matches.matches
@@ -131,7 +130,8 @@ export function Dashboard() {
                           <p>{m.explanation}</p>
                           <details>
                             <summary>
-                              Similarities, gaps & adaptation questions
+                              Context matches, differences, failures and
+                              adaptation questions
                             </summary>
                             <Details
                               data={{
@@ -153,7 +153,9 @@ export function Dashboard() {
                   )}
                   {r.matches.matches?.length > 6 && (
                     <button
+                      type="button"
                       className="secondary"
+                      aria-expanded={expandedMatches.includes(r.program_id)}
                       onClick={() =>
                         setExpandedMatches(
                           expandedMatches.includes(r.program_id)
@@ -172,38 +174,41 @@ export function Dashboard() {
                 </div>
               ))}
             </Panel>
-            <div className="two-columns">
-              <Panel title="Peer learning">
-                <p>
-                  Use fixed, permissioned cohort analyses to compare compatible
-                  observations. Missing reporting is never treated as poor
-                  performance.
-                </p>
-                <Link href="/analyses">Open pooled analysis →</Link>
-              </Panel>
-              <Panel title="Support for contributors">
-                <p>
-                  Core contributor tools are free. Sponsored preparation
-                  requests are recorded for manual follow-up; no sponsor
-                  commitment is implied.
-                </p>
-                <Form
-                  submit="Request onboarding support"
-                  onSubmit={(f) =>
-                    mutate("requests/", "POST", {
-                      kind: "sponsored_onboarding",
-                      note: text(f, "note"),
-                    })
-                  }
-                >
-                  <Textarea
-                    label="What help would be useful?"
-                    name="note"
-                    required
-                  />
-                </Form>
-              </Panel>
-            </div>
+            <Panel title="Compare compatible observations" variant="open">
+              <p>
+                Use fixed, permissioned cohort analyses to compare compatible
+                observations. Missing reporting is never treated as poor
+                performance.
+              </p>
+              <Link href="/analyses">Open combined analysis →</Link>
+            </Panel>
+            <Benchmark />
+            <Panel
+              title="Contributor support"
+              variant="open"
+              className="reading-column"
+            >
+              <p>
+                Core contributor tools are free. Sponsored preparation requests
+                are recorded for manual follow-up; no sponsor commitment is
+                implied.
+              </p>
+              <Form
+                submit="Request onboarding support"
+                onSubmit={(f) =>
+                  mutate("requests/", "POST", {
+                    kind: "sponsored_onboarding",
+                    note: text(f, "note"),
+                  })
+                }
+              >
+                <Textarea
+                  label="What help would be useful?"
+                  name="note"
+                  required
+                />
+              </Form>
+            </Panel>
           </>
         )}
       </State>
@@ -215,10 +220,10 @@ export function Programs() {
   return (
     <>
       <Header
-        title="Your programs."
+        title="Programs"
         action={
           <Link className="button primary" href="/programs/new">
-            Add program +
+            Add program
           </Link>
         }
       >
@@ -258,13 +263,14 @@ export function ProgramEditor({ id }: { id?: string }) {
   const p = programs?.find((x) => x.id === id);
   return (
     <>
-      <Header title={id ? "Edit program context." : "Describe a program."}>
+      <Header title={id ? "Edit program" : "Add program"}>
         Changes to program context invalidate dependent evidence and trigger
         fresh matching.
       </Header>
       <State data={programs} error={error}>
         <Form
           key={p?.id || "new"}
+          className="form editor-form"
           submit={id ? "Save program revision" : "Create program"}
           onSubmit={async (f) => {
             let source = text(f, "source_id");
@@ -305,7 +311,7 @@ export function ProgramEditor({ id }: { id?: string }) {
             router.push("/programs");
           }}
         >
-          <Panel title="Program profile">
+          <Panel title="Program profile" variant="open">
             <div className="form-grid">
               {[
                 ["name", "Program name", ""],
@@ -324,7 +330,11 @@ export function ProgramEditor({ id }: { id?: string }) {
               ))}
             </div>
           </Panel>
-          <Panel title="Delivery context">
+          <Panel title="Delivery context" variant="open">
+            <p className="muted">
+              Describe the setting and resources as reported. Leave unknown
+              context blank.
+            </p>
             <div className="form-grid">
               {[
                 "setting",
@@ -344,7 +354,7 @@ export function ProgramEditor({ id }: { id?: string }) {
             </div>
           </Panel>
           {!id && (
-            <Panel title="Supporting source">
+            <Panel title="Supporting source" variant="open">
               <Field label="Existing source (optional)" name="source_id">
                 <select name="source_id">
                   <option value="">Create a manual source record</option>
@@ -384,11 +394,10 @@ export function Cards() {
   return (
     <>
       <Header
-        eyebrow="Shared learning / Permissioned evidence"
-        title="What can we learn from each other?"
+        title="Evidence library"
         action={
           <Link className="button primary" href="/evidence/new">
-            Draft an intervention card +
+            Draft evidence
           </Link>
         }
       >
@@ -396,9 +405,7 @@ export function Cards() {
         their sources intact.
       </Header>
       <div className="search-bar">
-        <label className="sr-only" htmlFor="evidence-search">
-          Search evidence
-        </label>
+        <label htmlFor="evidence-search">Search evidence</label>
         <input
           id="evidence-search"
           type="search"
@@ -409,38 +416,59 @@ export function Cards() {
         <span>Only currently permitted evidence</span>
       </div>
       <State data={data} error={error}>
-        <div className="card-grid">
+        <div className="evidence-list">
           {data?.map((c) => (
-            <article className="evidence-card" key={c.id}>
-              <div className="actions">
-                <Badge>{c.card.evidence_label}</Badge>
-                <Badge>{c.status}</Badge>
-              </div>
-              <h2>
-                <Link href={`/evidence/${c.id}`}>{c.title}</Link>
-              </h2>
-              <p>
-                {c.payload.summary ||
-                  "A structured implementation record; open to review the reported evidence and caveats."}
-              </p>
-              <dl>
-                <dt>Population</dt>
-                <dd>{c.card.program.population}</dd>
-                <dt>Context</dt>
-                <dd>
-                  {c.card.program.geography} · {c.card.program.intervention}
-                </dd>
-              </dl>
-              {c.card.failures && (
-                <p className="failure-note">
-                  Mixed or failed results documented
+            <article className="evidence-card evidence-record" key={c.id}>
+              <div className="evidence-record-body">
+                <h2>
+                  <Link href={`/evidence/${c.id}`}>{c.title}</Link>
+                </h2>
+                <p>
+                  {c.payload.summary ||
+                    "A structured implementation record; open to review the reported evidence and caveats."}
                 </p>
-              )}
-              <Attributions artifact={c} />
-              <SaveEvidence id={c.id} />
-              <div className="org-card-footer">
-                <Badge>{c.source_kind}</Badge>
-                <Link href={`/evidence/${c.id}`}>Read evidence →</Link>
+                <dl className="record-metadata">
+                  <div>
+                    <dt>Population</dt>
+                    <dd>{c.card.program.population}</dd>
+                  </div>
+                  <div>
+                    <dt>Context</dt>
+                    <dd>
+                      {c.card.program.geography} · {c.card.program.intervention}
+                    </dd>
+                  </div>
+                </dl>
+                {c.card.failures && (
+                  <p className="failure-note">
+                    Mixed or failed results documented
+                  </p>
+                )}
+                <Attributions artifact={c} />
+              </div>
+              <div className="evidence-record-aside">
+                <dl className="record-metadata">
+                  <div>
+                    <dt>Evidence type</dt>
+                    <dd>{c.card.evidence_label}</dd>
+                  </div>
+                  <div>
+                    <dt>Editorial review</dt>
+                    <dd>
+                      <Badge>{c.status}</Badge>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Data origin</dt>
+                    <dd>
+                      <Badge>{c.source_kind}</Badge>
+                    </dd>
+                  </div>
+                </dl>
+                <div className="actions">
+                  <Link href={`/evidence/${c.id}`}>Read evidence →</Link>
+                  <SaveEvidence id={c.id} />
+                </div>
               </div>
             </article>
           ))}
@@ -479,23 +507,48 @@ export function Card({ id }: { id: string }) {
           >
             {data.payload.summary}
           </Header>
-          <div className="actions">
-            <Badge>{data.card.evidence_label}</Badge>
-            <Badge>{data.status}</Badge>
-            <Badge>{data.source_kind}</Badge>
-            <span>Revision {data.revision}</span>
+          <div className="evidence-metadata">
+            <dl className="record-metadata">
+              <div>
+                <dt>Evidence type</dt>
+                <dd>{data.card.evidence_label}</dd>
+              </div>
+              <div>
+                <dt>Editorial review</dt>
+                <dd>
+                  <Badge>{data.status}</Badge> · Revision {data.revision}
+                </dd>
+              </div>
+              <div>
+                <dt>Data origin</dt>
+                <dd>
+                  <Badge>{data.source_kind}</Badge>
+                </dd>
+              </div>
+            </dl>
             <SaveEvidence id={id} />
           </div>
-          <div className="two-columns">
-            <Panel title="Program & context">
-              <Details data={data.card.program} />
-            </Panel>
-            <Panel title="Evidence strength">
+          <div className="reading-column">
+            <Panel title="Program and context" variant="open">
               <Details
                 data={{
-                  evidence_label: data.card.evidence_label,
+                  program: data.card.program.name,
+                  cause: data.card.program.cause,
+                  intervention: data.card.program.intervention,
+                  population: data.card.program.population,
+                  geography: data.card.program.geography,
+                }}
+              />
+              <Details data={{ delivery_context: data.card.program.context }} />
+              <details className="source-drawer">
+                <summary>Complete program record and identifiers</summary>
+                <Details data={data.card.program} />
+              </details>
+            </Panel>
+            <Panel title="How to interpret this evidence" variant="open">
+              <Details
+                data={{
                   study_design: data.card.study_design,
-                  review_status: data.status,
                   attribution: data.card.attribution,
                 }}
               />
@@ -505,21 +558,27 @@ export function Card({ id }: { id: string }) {
                 evidence.
               </Notice>
             </Panel>
+            {[
+              ["implementation_steps", "What was done"],
+              ["barriers", "Operational barriers"],
+              ["failures", "Failures and contradictory findings"],
+              ["caveats", "Limitations and unanswered questions"],
+            ].map(([k, t]) => (
+              <Panel key={k} title={t} variant="open">
+                <p className="preserve-lines">
+                  {data.card[k] ||
+                    "Not reported. Collect this information before applying the lesson."}
+                </p>
+              </Panel>
+            ))}
           </div>
-          {[
-            ["implementation_steps", "Implementation guide"],
-            ["barriers", "Operational barriers"],
-            ["failures", "Failures & contradictory findings"],
-            ["caveats", "Caveats & unanswered questions"],
-          ].map(([k, t]) => (
-            <Panel key={k} title={t}>
-              <p className="preserve-lines">
-                {data.card[k] ||
-                  "Not reported. Collect this information before applying the lesson."}
-              </p>
-            </Panel>
-          ))}
-          <Panel title="Source-grounded explanation">
+          <Attributions artifact={data} />
+          <Sources sources={data.sources} />
+          <Panel
+            title="Source-grounded explanation"
+            variant="open"
+            className="reading-column"
+          >
             <p>
               Deterministic explanations work without a model. Any optional
               generated synthesis must retain permitted citations.
@@ -556,10 +615,8 @@ export function Card({ id }: { id: string }) {
               onSaved={() => setVersion(version + 1)}
             />
           )}
-          <Attributions artifact={data} />
-          <Sources sources={data.sources} />
           {data.review && (
-            <Panel title="Version-bound review">
+            <Panel title="Review of this revision" variant="open">
               <Details data={data.review} />
             </Panel>
           )}
@@ -568,7 +625,7 @@ export function Card({ id }: { id: string }) {
               Printable evidence report
             </Link>
             <Link className="button secondary" href={`/graph?root=${id}`}>
-              Explore relationships
+              View connections
             </Link>
           </div>
         </>
@@ -592,19 +649,14 @@ export function CardEditor({ id }: { id?: string }) {
   const { data, error } = useResource(id ? `cards/${id}/` : "dashboard/");
   return (
     <>
-      <Header
-        title={
-          id
-            ? "Revise the implementation lesson."
-            : "Draft a sourced intervention card."
-        }
-      >
+      <Header title={id ? "Edit evidence" : "Draft evidence"}>
         Record what happened, what failed, and what another organization should
         ask before adapting it.
       </Header>
       <State data={data} error={error}>
         <Form
           key={data?.id || "new"}
+          className="form editor-form"
           submit={id ? "Save new revision" : "Save private draft"}
           onSubmit={async (f) => {
             const fields = Object.fromEntries(
@@ -644,7 +696,7 @@ export function CardEditor({ id }: { id?: string }) {
             router.push(`/evidence/${c.id}`);
           }}
         >
-          <Panel title="The lesson">
+          <Panel title="Evidence overview" variant="open">
             <Field
               label="Card title"
               name="title"
@@ -686,7 +738,11 @@ export function CardEditor({ id }: { id?: string }) {
               </>
             )}
           </Panel>
-          <Panel title="Implementation & limitations">
+          <Panel title="Implementation and limitations" variant="open">
+            <p className="muted">
+              Include barriers and mixed results so readers can assess whether
+              the lesson applies to their context.
+            </p>
             {[
               ["implementation_steps", "Implementation steps"],
               ["barriers", "Operational barriers"],
@@ -706,7 +762,7 @@ export function CardEditor({ id }: { id?: string }) {
             ))}
           </Panel>
           {!id && (
-            <Panel title="A traceable substantive claim">
+            <Panel title="Claim and supporting source" variant="open">
               <Textarea label="Claim supported by the source" name="claim" />
               <Field label="Supporting source" name="claim_source">
                 <select name="claim_source">
@@ -739,17 +795,17 @@ export function Uploads() {
   return (
     <>
       <Header
-        title="Bring your evidence together."
+        title="Data uploads"
         action={
           <Link className="button secondary" href="/jobs">
-            Worker & job status ↗
+            Background jobs
           </Link>
         }
       >
         Import aggregate outcomes and costs, or quarantine a report for manual
         evidence drafting.
       </Header>
-      <div className="two-columns">
+      <div className="upload-layout">
         <Panel title="Upload a source">
           <Form
             submit="Upload to quarantine"
@@ -770,9 +826,13 @@ export function Uploads() {
               details, identifiers, or sensitive individual records. Maximum 5
               MiB.
             </Notice>
+            <p className="muted">
+              Text and PDF reports stay quarantined for manual review. Extracted
+              text does not automatically become validated outcome data.
+            </p>
           </Form>
         </Panel>
-        <Panel title="Start with a supported template">
+        <Panel title="Templates and preparation" variant="open">
           <p>
             Keep outcome definitions, units, denominators, periods, and cohort
             independence explicit. Unknown values remain unknown.
@@ -796,16 +856,18 @@ export function Uploads() {
               Cost template ↓
             </Action>
           </div>
-          <p className="fine">
-            Reports stay quarantined. Extracted text does not automatically
-            become validated outcome data.
+          <p className="muted">
+            After upload, the worker checks your file. Aggregate files require
+            column mapping and validation before you can commit records.
           </p>
         </Panel>
       </div>
       <Panel
         title="Import history"
+        variant="open"
         aside={
           <button
+            type="button"
             className="text-button"
             onClick={() => setVersion(version + 1)}
           >
@@ -899,6 +961,7 @@ export function ImportDetail({ id }: { id: string }) {
             title={data.filename}
             action={
               <button
+                type="button"
                 className="secondary"
                 onClick={() => setVersion(version + 1)}
               >
@@ -906,7 +969,7 @@ export function ImportDetail({ id }: { id: string }) {
               </button>
             }
           >
-            Secure onboarding · <Badge>{data.status}</Badge>
+            Import status · <Badge>{data.status}</Badge>
           </Header>
           <Notice>
             {data.status === "needs_mapping"
@@ -918,7 +981,7 @@ export function ImportDetail({ id }: { id: string }) {
                   : "Validation and persistence are performed by the background worker."}
           </Notice>
           {["needs_mapping", "partial", "invalid"].includes(data.status) && (
-            <Panel title="Column mapping">
+            <Panel title="Column mapping" variant="open">
               <p>
                 Map input headers to the supported aggregate fields. If headers
                 are unavailable, paste the comma-separated header row only.
@@ -948,26 +1011,28 @@ export function ImportDetail({ id }: { id: string }) {
                   setVersion(version + 1);
                 }}
               >
-                {detected.map((c, i) => (
-                  <Field key={c} label={c} name={`column_${i}`}>
-                    <select
-                      required
-                      name={`column_${i}`}
-                      defaultValue={
-                        data.mapping?.[c] || (FIELDS.includes(c) ? c : "")
-                      }
-                    >
-                      <option value="">Select normalized field</option>
-                      {FIELDS.map((f) => (
-                        <option key={f}>{f}</option>
-                      ))}
-                    </select>
-                  </Field>
-                ))}
+                <div className="mapping-grid">
+                  {detected.map((c, i) => (
+                    <Field key={c} label={c} name={`column_${i}`}>
+                      <select
+                        required
+                        name={`column_${i}`}
+                        defaultValue={
+                          data.mapping?.[c] || (FIELDS.includes(c) ? c : "")
+                        }
+                      >
+                        <option value="">Select normalized field</option>
+                        {FIELDS.map((f) => (
+                          <option key={f}>{f}</option>
+                        ))}
+                      </select>
+                    </Field>
+                  ))}
+                </div>
               </Form>
             </Panel>
           )}
-          <Panel title="Validation results">
+          <Panel title="Validation results" variant="open">
             {data.diagnostics?.length ? (
               <div className="table-wrap">
                 <table>
@@ -1006,7 +1071,7 @@ export function ImportDetail({ id }: { id: string }) {
               Download validation issues ↓
             </Action>
           </Panel>
-          <Panel title="Preview · first records only">
+          <Panel title="Preview · first records only" variant="open">
             {Array.isArray(data.preview) && data.preview.length ? (
               data.preview.map((r: Row, i: number) => (
                 <details className="source-drawer" key={i}>
@@ -1060,13 +1125,13 @@ export function Opportunities() {
       recipients.set(c.owner_id, c.card?.program?.name || c.title);
   return (
     <>
-      <Header title="Funding opportunities, with context.">
+      <Header title="Funding opportunities">
         A limited curated catalogue. Matches use your stored cause and
         geography; verify all eligibility and deadlines with the funder.
       </Header>
       <State data={data} error={error}>
         {data?.map((o) => (
-          <Panel key={o.id} title={o.title}>
+          <Panel key={o.id} title={o.title} variant="open">
             <div className="actions">
               <Badge>{o.source.kind}</Badge>
               <Badge>{o.freshness}</Badge>

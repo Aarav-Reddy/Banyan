@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Row, api, mutate, download, date, label } from "@/lib/api";
 import { useWorkspace } from "./application";
+import { ImpactReportContent, TechnicalDetails } from "./report-content";
 import {
   Header,
   Panel,
@@ -40,7 +41,7 @@ export function Attributions({ artifact }: { artifact: Row }) {
 
 export function CreateWorkspace() {
   return (
-    <Panel title="Create an independent workspace">
+    <Panel title="Create an independent workspace" variant="open">
       <p>
         Existing invited accounts can create a private NGO or foundation
         workspace. An NGO identity remains unlinked until an independent
@@ -79,10 +80,8 @@ export function PasswordReset() {
   const confirm = Boolean(uid && token);
   const [result, setResult] = useState<Row | null>(null);
   return (
-    <main className="public-content">
-      <Header
-        title={confirm ? "Choose a new password." : "Recover your account."}
-      >
+    <main className="public-content auth-page">
+      <Header title={confirm ? "Choose a new password" : "Reset your password"}>
         Reset instructions use the email address on your account.
       </Header>
       <Panel title={confirm ? "Reset password" : "Request reset instructions"}>
@@ -151,7 +150,7 @@ export function WorkspaceProfile() {
   const { data: areas } = useResource<Row[]>("geographies/");
   const canEdit = ["owner", "administrator"].includes(ws.role);
   return (
-    <Panel title="Mission & service context">
+    <Panel title="Mission & service context" variant="open">
       <State data={data} error={error}>
         {data && (
           <>
@@ -212,7 +211,10 @@ export function WorkspaceProfile() {
                   ))}
                 </fieldset>
                 <details>
-                  <summary>Additional structured context</summary>
+                  <summary>
+                    <span>Additional structured context</span> ·{" "}
+                    {Object.keys(data.context).length} fields saved
+                  </summary>
                   <Textarea
                     label="Context JSON"
                     name="context"
@@ -242,7 +244,7 @@ export function IdentityClaims() {
   const canEdit = ["owner", "administrator"].includes(ws.role);
   if (ws.kind !== "ngo") return null;
   return (
-    <Panel title="Organization identity">
+    <Panel title="Organization identity" variant="open">
       <p>
         Public identity linkage requires independent review of your authority to
         represent the organization.
@@ -353,7 +355,7 @@ export function ContactConsent() {
   const [version, setVersion] = useState(0);
   const { data, error } = useResource("pilot/contact/", version);
   return (
-    <Panel title="Optional contact sharing">
+    <Panel title="Optional contact sharing" variant="open">
       <State data={data} error={error}>
         {data && (
           <Form
@@ -409,7 +411,7 @@ export function IntroductionInbox() {
   const [version, setVersion] = useState(0);
   const { data, error } = useResource<Row[]>("pilot/introductions/", version);
   return (
-    <Panel title="Incoming introduction requests">
+    <Panel title="Incoming introduction requests" variant="open">
       <State data={data} error={error}>
         {data?.map((r) => (
           <div className="source" key={r.id}>
@@ -500,12 +502,12 @@ export function SavedEvidence() {
   const ws = useWorkspace();
   return (
     <>
-      <Header title="Evidence to return to.">
+      <Header title="Saved evidence">
         Saved for your workspace. Revoked evidence disappears immediately.
       </Header>
       <State data={data} error={error}>
         {data?.map((b) => (
-          <Panel key={b.id} title={b.artifact.title}>
+          <Panel key={b.id} title={b.artifact.title} variant="open">
             <p>{b.artifact.payload.summary}</p>
             <Badge>{b.artifact.status}</Badge>
             <Attributions artifact={b.artifact} />
@@ -565,9 +567,13 @@ export function Watchlist() {
   return (
     <>
       <Header
-        title="Keep an eye on what changes."
+        title="Watchlist"
         action={
-          <button className="secondary" onClick={() => setVersion(version + 1)}>
+          <button
+            type="button"
+            className="secondary"
+            onClick={() => setVersion(version + 1)}
+          >
             Refresh watchlist
           </button>
         }
@@ -595,7 +601,7 @@ export function Watchlist() {
         )}
       </Panel>
       <State data={data} error={error}>
-        <Panel title="Watched organizations">
+        <Panel title="Watched organizations" variant="open">
           {data?.map((w) => (
             <div className="list-row" key={w.id}>
               <div>
@@ -634,7 +640,7 @@ export function Watchlist() {
 export function Benchmark() {
   const { data, error } = useResource("pilot/benchmark/");
   return (
-    <Panel title="Compatible financial peers">
+    <Panel title="Compatible financial peers" variant="open">
       <State data={data} error={error}>
         {data && (
           <>
@@ -684,13 +690,17 @@ export function ImpactReport() {
   return (
     <State data={data} error={error}>
       {data && (
-        <>
+        <article className="report-document">
           <Header
             eyebrow="Private contributor report / Draft"
             title={`${data.workspace.name}: program evidence`}
             action={
               <div className="actions no-print">
-                <button className="primary" onClick={() => window.print()}>
+                <button
+                  type="button"
+                  className="primary"
+                  onClick={() => window.print()}
+                >
                   Print impact report
                 </button>
                 <Action
@@ -710,34 +720,14 @@ export function ImpactReport() {
             <Badge>{data.source_kind}</Badge>
           </Header>
           <Notice>{data.limitations.join(" ")}</Notice>
-          {[
-            ["Programs", data.programs],
-            ["Source-reported outcomes", data.observations],
-            ["Reported costs", data.costs],
-            ["Intervention evidence", data.cards],
-            ["Data quality gaps", data.data_quality],
-          ].map(([title, records]) => (
-            <Panel key={String(title)} title={String(title)}>
-              {(records as Row[]).length ? (
-                (records as Row[]).map((r, i) => (
-                  <div className="source" key={r.id || i}>
-                    {r.title && (
-                      <h3>
-                        <Link href={`/evidence/${r.id}`}>{r.title}</Link>
-                      </h3>
-                    )}
-                    <Details data={r} />
-                    <Attributions artifact={r} />
-                  </div>
-                ))
-              ) : (
-                <Empty title={`No ${String(title).toLowerCase()} reported`} />
-              )}
-            </Panel>
-          ))}
+          <ImpactReportContent
+            data={data}
+            attribution={(record) => <Attributions artifact={record} />}
+          />
           <Attributions artifact={data} />
           <Sources sources={data.sources} />
-        </>
+          <TechnicalDetails data={data} />
+        </article>
       )}
     </State>
   );
@@ -790,7 +780,7 @@ export function SourceIssues({ sourceId }: { sourceId?: string }) {
   const ws = useWorkspace(),
     canEdit = !["viewer", "reviewer"].includes(ws.role);
   return (
-    <Panel title="Source corrections & disputes">
+    <Panel title="Source corrections & disputes" variant="open">
       <p>
         Record a source-linked concern for independent review. A reviewed issue
         does not silently rewrite the underlying source.

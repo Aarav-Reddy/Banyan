@@ -48,6 +48,7 @@ html {
   scroll-padding-block: 20px;
 }
 body {
+  overflow-wrap: anywhere;
   margin: 0;
   font-size: 0.9375rem;
   line-height: 1.55;
@@ -1600,7 +1601,12 @@ details[open] > summary {
     justify-content: flex-end;
   }
   .workspace-caption {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
   }
   .page-heading {
     flex-wrap: wrap;

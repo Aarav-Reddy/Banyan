@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Row, label, date, money, mutate, download } from "@/lib/api";
+import { Row, label, date, mutate, download } from "@/lib/api";
 import {
   useResource,
   Header,
@@ -22,6 +22,11 @@ import {
   text,
 } from "./ui";
 import { useWorkspace } from "./application";
+import {
+  PortfolioReportContent,
+  PortfolioReviewContent,
+  TechnicalDetails,
+} from "./report-content";
 import {
   WorkspaceProfile,
   CreateWorkspace,
@@ -50,15 +55,12 @@ export function Analyses() {
   }
   return (
     <>
-      <Header
-        eyebrow="Shared intelligence / Fixed cohort releases"
-        title="Find the pattern. Keep the context."
-      >
+      <Header title="Combined analysis">
         Combine compatible aggregate observations from consenting organizations.
         Descriptive pooling does not establish causality.
       </Header>
-      <div className="two-columns">
-        <Panel title="Create a fixed analysis">
+      <div className="analysis-layout">
+        <Panel title="Create a fixed analysis" variant="open">
           <Form
             submit="Calculate pooled draft"
             onSubmit={async (f) => {
@@ -109,7 +111,7 @@ export function Analyses() {
           </Form>
           {!groups.size && <Empty title="No authorized cohort sets" />}
         </Panel>
-        <Panel title="Release safeguards">
+        <Panel title="Release safeguards" className="analysis-safeguards">
           <ul className="checklist">
             <li>
               Compatible definitions, intervention, population, unit, and
@@ -133,14 +135,20 @@ export function Analyses() {
         </Panel>
       </div>
       {result && (
-        <Panel title="Latest calculation">
+        <Panel title="Latest calculation" variant="open">
           <AnalysisResult payload={result.payload} />
           <Attributions artifact={result} />
         </Panel>
       )}
+      <h2>Saved analyses</h2>
       <State data={data} error={error}>
         {data?.map((a) => (
-          <Panel key={a.id} title={a.title} aside={<Badge>{a.status}</Badge>}>
+          <Panel
+            key={a.id}
+            title={a.title}
+            aside={<Badge>{a.status}</Badge>}
+            variant="open"
+          >
             <AnalysisResult payload={a.payload} />
             <div className="actions">
               <Link className="button secondary" href={`/reports/${a.id}`}>
@@ -260,7 +268,7 @@ export function Graph() {
   const edges: Row[] = data?.edges || [];
   return (
     <>
-      <Header title="Follow the evidence connections.">
+      <Header title="Connections">
         Explore actual, source-backed relationships. Access is checked before
         traversal.
       </Header>
@@ -280,6 +288,7 @@ export function Graph() {
           />
         </Form>
         <button
+          type="button"
           className="text-button"
           onClick={() => {
             setRoot("");
@@ -292,10 +301,17 @@ export function Graph() {
       <State data={data} error={error}>
         {edges.length ? (
           <>
-            <Panel title="Relationship map">
+            <Panel title="Relationship map" variant="open">
+              <p className="muted">
+                Each connection reads from the record on the left, through its
+                relationship, to the record on the right. Select a connection to
+                inspect its source.
+              </p>
               <div className="graph-visual">
                 {edges.slice(0, 12).map((e) => (
                   <button
+                    type="button"
+                    aria-pressed={selected?.id === e.id}
                     className={`graph-edge ${selected?.id === e.id ? "selected" : ""}`}
                     key={e.id}
                     onClick={() => setSelected(e)}
@@ -336,6 +352,7 @@ export function Graph() {
                     Evidence record ↗
                   </Link>
                   <button
+                    type="button"
                     onClick={() => setRoot(selected.target_id)}
                     className="secondary"
                   >
@@ -344,7 +361,7 @@ export function Graph() {
                 </div>
               </Panel>
             )}
-            <Panel title="Accessible relationship table">
+            <Panel title="All permitted relationships" variant="open">
               <div className="table-wrap">
                 <table>
                   <thead>
@@ -364,6 +381,7 @@ export function Graph() {
                         </td>
                         <td>
                           <button
+                            type="button"
                             className="text-button"
                             onClick={() => setSelected(e)}
                           >
@@ -402,7 +420,7 @@ export function Alerts() {
   const { data: subscriptions } = useResource("subscriptions/", version);
   return (
     <>
-      <Header title="Changes worth your attention.">
+      <Header title="Alerts">
         In-app updates tied to stored source revisions, evidence, and your
         program context.
       </Header>
@@ -511,7 +529,7 @@ export function Sharing() {
   return (
     <>
       <Header
-        title="Your evidence. Your permissions."
+        title="Sharing permissions"
         action={
           <Link className="button secondary" href="/audit">
             Data-use activity ↗
@@ -526,7 +544,11 @@ export function Sharing() {
         physical deletion. Previously downloaded files cannot be recalled.
         Backups require operator-managed expiry.
       </Notice>
-      <Panel title="Create a data-use grant">
+      <Panel
+        title="Create a data-use grant"
+        variant="open"
+        className="editor-form"
+      >
         <Form
           submit="Grant scoped permission"
           onSubmit={async (f) => {
@@ -615,7 +637,7 @@ export function Sharing() {
           </p>
         </Form>
       </Panel>
-      <Panel title="Current permissions">
+      <Panel title="Current permissions" variant="open">
         {grants?.map((g) => (
           <div className="list-row" key={g.id}>
             <div>
@@ -646,7 +668,7 @@ export function Sharing() {
         ))}
         {!grants?.length && <Empty title="No explicit sharing grants" />}
       </Panel>
-      <Panel title="Owned sources & withdrawal">
+      <Panel title="Owned sources & withdrawal" variant="open">
         <State data={data} error={error}>
           {owned.map((s) => (
             <div className="source" key={s.id}>
@@ -692,18 +714,47 @@ export function SourcesPage({ id }: { id?: string }) {
   );
   return (
     <>
-      <Header
-        title={id ? "Inspect the source." : "Every claim starts somewhere."}
-      >
+      <Header title={id ? "Source details" : "Sources"}>
         Trace reporting periods, retrieval dates, source revisions, and
         transformations.
       </Header>
       <State data={data} error={error}>
         {data &&
           (id ? (
-            <Panel title={(data as Row).title}>
-              <Badge>{(data as Row).kind}</Badge>
-              <Details data={data as Row} />
+            <Panel title={(data as Row).title} variant="open">
+              <div className="actions">
+                <Badge>{(data as Row).kind}</Badge>
+                <Badge>{(data as Row).state}</Badge>
+                <span>Revision {(data as Row).revision}</span>
+              </div>
+              <Details
+                data={{
+                  reporting_period_start: date((data as Row).period_start),
+                  reporting_period_end: date((data as Row).period_end),
+                  published: date((data as Row).published_at),
+                  retrieved: date((data as Row).retrieved_at),
+                  cause: (data as Row).cause,
+                  geography: (data as Row).geography,
+                  locator: (data as Row).locator,
+                  transformations: (data as Row).transformations,
+                }}
+              />
+              {(data as Row).source_url &&
+                /^https?:\/\//.test((data as Row).source_url) && (
+                  <p>
+                    <a
+                      href={(data as Row).source_url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Open original source ↗
+                    </a>
+                  </p>
+                )}
+              <TechnicalDetails
+                data={data as Row}
+                title="Complete source record and technical details"
+              />
             </Panel>
           ) : (
             <Panel>
@@ -756,7 +807,7 @@ export function Settings() {
   const ws = useWorkspace();
   return (
     <>
-      <Header title="Workspace settings.">
+      <Header title="Workspace settings">
         {ws.name} · Your role: {label(ws.role)}
       </Header>
       <WorkspaceProfile />
@@ -764,7 +815,7 @@ export function Settings() {
       {["owner", "administrator"].includes(ws.role) && <ContactConsent />}
       <IntroductionInbox />
       <CreateWorkspace />
-      <Panel title="Members & roles">
+      <Panel title="Members & roles" variant="open">
         <State data={data} error={error}>
           {data?.map((m) => (
             <div className="list-row" key={m.id}>
@@ -840,7 +891,7 @@ export function Settings() {
             </Notice>
           )}
         </Panel>
-        <Panel title="Workspace boundaries">
+        <Panel title="Workspace identifiers and access" variant="open">
           <Details
             data={{
               workspace_id: ws.id,
@@ -869,10 +920,7 @@ export function Reviews() {
   );
   return (
     <>
-      <Header
-        eyebrow="Assigned reviewer workbench"
-        title="Review the evidence, not just the conclusion."
-      >
+      <Header title="Review queue">
         Decisions bind the exact revision and current source snapshot. You
         cannot approve your own work.
       </Header>
@@ -881,10 +929,18 @@ export function Reviews() {
         endorsements. Changed or withdrawn inputs invalidate approval.
       </Notice>
       <div className="segmented no-print" aria-label="Review queue">
-        <button aria-pressed={!approved} onClick={() => setStatus("pending")}>
+        <button
+          type="button"
+          aria-pressed={!approved}
+          onClick={() => setStatus("pending")}
+        >
           Pending
         </button>
-        <button aria-pressed={approved} onClick={() => setStatus("approved")}>
+        <button
+          type="button"
+          aria-pressed={approved}
+          onClick={() => setStatus("approved")}
+        >
           Approved
         </button>
       </div>
@@ -897,7 +953,12 @@ export function Reviews() {
       )}
       <State data={data} error={error}>
         {data?.map((a) => (
-          <Panel key={a.id} title={a.title} aside={<Badge>{a.kind}</Badge>}>
+          <Panel
+            key={a.id}
+            title={a.title}
+            aside={<Badge>{a.kind}</Badge>}
+            className="review-item"
+          >
             <p>
               Revision {a.revision} · {a.cause} · {a.geography}
             </p>
@@ -911,47 +972,57 @@ export function Reviews() {
             <Attributions artifact={a} />
             <Sources sources={a.sources} />
             {a.kind === "identity_claim" && <IdentityProof id={a.id} />}
-            {!["card", "analysis", "identity_claim"].includes(a.kind) && (
-              <Details data={a.payload} />
+            {!["card", "analysis", "identity_claim", "portfolio"].includes(
+              a.kind,
+            ) && <Details data={a.payload} />}
+            {a.kind === "portfolio" && (
+              <PortfolioReviewContent payload={a.payload} />
             )}
             {a.kind === "analysis" && <AnalysisResult payload={a.payload} />}
-            <Form
-              submit={
-                approved
-                  ? "Withdraw approved revision"
-                  : "Record review decision"
-              }
-              onSubmit={async (f) => {
-                await mutate(`reviews/${a.id}/`, "POST", {
-                  revision: a.revision,
-                  decision: approved ? "withdrawn" : text(f, "decision"),
-                  reason: text(f, "reason"),
-                });
-                setVersion(version + 1);
-              }}
-            >
-              <Field label="Decision" name="decision">
-                <select name="decision">
-                  {approved ? (
-                    <option value="withdrawn">
-                      Withdraw this approved revision
-                    </option>
-                  ) : (
-                    <>
-                      <option value="changes_requested">Request changes</option>
-                      <option value="approved">Approve this revision</option>
-                      <option value="rejected">Reject</option>
-                      <option value="withdrawn">Withdraw</option>
-                    </>
-                  )}
-                </select>
-              </Field>
-              <Textarea
-                label="Reason, scope & caveats"
-                name="reason"
-                required
-              />
-            </Form>
+            <div className="review-decision">
+              <h3>
+                {approved ? "Withdraw this approval" : "Record your decision"}
+              </h3>
+              <Form
+                submit={
+                  approved
+                    ? "Withdraw approved revision"
+                    : "Record review decision"
+                }
+                onSubmit={async (f) => {
+                  await mutate(`reviews/${a.id}/`, "POST", {
+                    revision: a.revision,
+                    decision: approved ? "withdrawn" : text(f, "decision"),
+                    reason: text(f, "reason"),
+                  });
+                  setVersion(version + 1);
+                }}
+              >
+                <Field label="Decision" name="decision">
+                  <select name="decision">
+                    {approved ? (
+                      <option value="withdrawn">
+                        Withdraw this approved revision
+                      </option>
+                    ) : (
+                      <>
+                        <option value="changes_requested">
+                          Request changes
+                        </option>
+                        <option value="approved">Approve this revision</option>
+                        <option value="rejected">Reject</option>
+                        <option value="withdrawn">Withdraw</option>
+                      </>
+                    )}
+                  </select>
+                </Field>
+                <Textarea
+                  label="Reason, scope & caveats"
+                  name="reason"
+                  required
+                />
+              </Form>
+            </div>
           </Panel>
         ))}
         {data?.length === 0 && (
@@ -976,7 +1047,7 @@ export function Metrics() {
   return (
     <>
       <Header
-        title="Measure the pilot honestly."
+        title="Pilot metrics"
         action={
           <Action
             run={() =>
@@ -996,7 +1067,7 @@ export function Metrics() {
             <Notice>
               {data.warning} Ground truth: {data.ground_truth}.
             </Notice>
-            <Panel title="Collection preferences">
+            <Panel title="Collection preferences" variant="open">
               <Form
                 submit="Save measurement preference"
                 onSubmit={async (f) => {
@@ -1020,7 +1091,11 @@ export function Metrics() {
                 </p>
               </Form>
             </Panel>
-            <Panel title="Record a measured pilot event">
+            <Panel
+              title="Record a measured pilot event"
+              variant="open"
+              className="editor-form"
+            >
               <Form
                 submit="Save event"
                 onSubmit={async (f) => {
@@ -1078,10 +1153,10 @@ export function Metrics() {
                 />
               </Form>
             </Panel>
-            <Panel title="Measurement definitions">
+            <Panel title="Measurement definitions" variant="open">
               <Details data={data.definitions} />
             </Panel>
-            <Panel title="Recorded events">
+            <Panel title="Recorded events" variant="open">
               {data.events.length ? (
                 data.events.map((e: Row) => (
                   <div className="source" key={e.id}>
@@ -1107,9 +1182,13 @@ export function Jobs() {
   return (
     <>
       <Header
-        title="Background work, made visible."
+        title="Background jobs"
         action={
-          <button className="secondary" onClick={() => setVersion(version + 1)}>
+          <button
+            type="button"
+            className="secondary"
+            onClick={() => setVersion(version + 1)}
+          >
             Refresh jobs
           </button>
         }
@@ -1160,13 +1239,17 @@ export function Report({ id }: { id: string }) {
   return (
     <State data={data} error={error}>
       {data && (
-        <>
+        <article className="report-document">
           <Header
             eyebrow="Philanthra / Source-linked report"
             title={data.title}
             action={
               <div className="actions no-print">
-                <button className="primary" onClick={() => window.print()}>
+                <button
+                  type="button"
+                  className="primary"
+                  onClick={() => window.print()}
+                >
                   Print report
                 </button>
                 <ExportButton id={id} />
@@ -1182,54 +1265,25 @@ export function Report({ id }: { id: string }) {
             information remains unknown.
           </Notice>
           {data.kind === "analysis" ? (
-            <Panel title="Descriptive analysis">
+            <Panel title="Descriptive analysis" variant="open">
               <AnalysisResult payload={data.payload} />
             </Panel>
           ) : data.kind === "portfolio" ? (
-            <Panel title="Funding allocation">
-              <Details
-                data={{
-                  budget: money(data.portfolio.budget_cents, true),
-                  unallocated: money(data.portfolio.unallocated_cents, true),
-                  method: data.method_version,
-                  planning_inputs: data.portfolio.constraints,
-                }}
-              />
-              <div className="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Organization</th>
-                      <th>Amount</th>
-                      <th>Reason</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.portfolio.allocations.map((a: Row) => (
-                      <tr key={a.id}>
-                        <td>{a.organization_name}</td>
-                        <td>{money(a.amount_cents, true)}</td>
-                        <td>{a.explanation}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Panel>
+            <PortfolioReportContent data={data} />
           ) : data.kind !== "card" ? (
-            <Panel title="Artifact details">
+            <Panel title="Artifact details" variant="open">
               <Details data={data.payload} />
               {data.kind === "identity_claim" && <IdentityProof id={id} />}
             </Panel>
           ) : (
-            <Panel title="Evidence summary">
+            <Panel title="Evidence summary" variant="open">
               <p>{data.payload.summary || "No summary reported."}</p>
               <Link href={`/evidence/${id}`}>
                 Inspect full intervention card
               </Link>
             </Panel>
           )}
-          <Panel title="Review & reproducibility">
+          <Panel title="Review and reproducibility" variant="open">
             <Details
               data={{
                 status: data.status,
@@ -1242,7 +1296,8 @@ export function Report({ id }: { id: string }) {
           </Panel>
           <Attributions artifact={data} />
           <Sources sources={data.sources} />
-        </>
+          <TechnicalDetails data={data} />
+        </article>
       )}
     </State>
   );
@@ -1251,7 +1306,7 @@ export function Audit() {
   const { data, error } = useResource<Row[]>("audit/");
   return (
     <>
-      <Header title="Data-use activity.">
+      <Header title="Data-use activity">
         Workspace-scoped records of imports, access changes, review, exports,
         and withdrawal. Application-enforced audit records are not advertised as
         tamper-proof.
@@ -1291,12 +1346,12 @@ export function Audit() {
 export function Methodology() {
   return (
     <>
-      <Header eyebrow="Methods & limitations" title="Clarity over certainty.">
+      <Header eyebrow="Methods & limitations" title="Methods and limitations">
         Philanthra helps people investigate and learn. Every calculation has
         boundaries; every consequential recommendation needs human review.
       </Header>
-      <div className="two-columns">
-        <Panel title="Financial warning signals">
+      <div className="reading-column">
+        <Panel variant="open" title="Financial warning signals">
           <p>
             Program-spending share is program expenses divided by positive total
             expenses. Operating margin is revenue minus expenses, divided by
@@ -1313,7 +1368,7 @@ export function Methodology() {
             probabilities. Program-spending share is not impact.
           </Notice>
         </Panel>
-        <Panel title="Funding allocations">
+        <Panel variant="open" title="Funding allocations">
           <p>
             The pilot uses a deterministic, constrained proportional planning
             heuristic. Donor-selected weights, candidate exclusions, caps,
@@ -1326,7 +1381,7 @@ export function Methodology() {
           </p>
           <p>No payments, grant submission, or pay-to-rank.</p>
         </Panel>
-        <Panel title="Learning & transfer">
+        <Panel variant="open" title="Learning & transfer">
           <p>
             Cause, intervention, population, setting, duration, resources, and
             infrastructure inform deterministic matching. Similarities,
@@ -1342,7 +1397,7 @@ export function Methodology() {
             invent claims and citations. The default provider is off.
           </p>
         </Panel>
-        <Panel title="Pooling & privacy">
+        <Panel variant="open" title="Pooling & privacy">
           <p>
             Only compatible definitions, units, populations, interventions,
             follow-up periods, and independently documented cohorts may be
@@ -1359,7 +1414,7 @@ export function Methodology() {
             Heterogeneity and possible Simpson reversals must be inspected.
           </p>
         </Panel>
-        <Panel title="Data provenance">
+        <Panel variant="open" title="Data provenance">
           <p>
             Public sources, NGO contributions, and synthetic demonstrations are
             distinguished. Reporting period differs from retrieval date. Amended
@@ -1374,7 +1429,7 @@ export function Methodology() {
             transformations, and access restrictions.
           </p>
         </Panel>
-        <Panel title="Pilot boundaries">
+        <Panel variant="open" title="Pilot boundaries">
           <p>
             The local demo uses fictional organizations and synthetic evidence.
             It does not establish real-world impact, partnerships, independently
