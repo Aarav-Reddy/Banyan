@@ -213,13 +213,20 @@ def _recommendations(job):
         subscription = m.Subscription.objects.filter(owner=ws).first()
         if subscription and not subscription.evidence:
             continue
-        cards = [
-            a
-            for a in visible_artifacts(ws, kind="card")
-            if a.status == "approved"
-            and a.owner_id != ws.id
-            and (not target_artifact or a.id == target_artifact.id)
-        ]
+        if target_artifact:
+            # A card-review event concerns exactly one card. Rechecking every
+            # unrelated card for every recipient made seeded jobs quadratic.
+            cards = (
+                [target_artifact]
+                if target_artifact.owner_id != ws.id and can_artifact(target_artifact, ws)
+                else []
+            )
+        else:
+            cards = [
+                a
+                for a in visible_artifacts(ws, kind="card")
+                if a.status == "approved" and a.owner_id != ws.id
+            ]
         programs = m.Program.objects.filter(owner=ws, source__state="active")
         for program in programs:
             profile = {

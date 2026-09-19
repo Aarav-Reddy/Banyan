@@ -881,7 +881,7 @@ export function ImportDetail({ id }: { id: string }) {
   const { data, error } = useResource(`imports/${id}/`, version);
   const [columns, setColumns] = useState<string[]>([]);
   useEffect(() => {
-    if (data?.status === "queued") {
+    if (["queued", "processing"].includes(data?.status)) {
       const t = setTimeout(() => setVersion((v) => v + 1), 3000);
       return () => clearTimeout(t);
     }

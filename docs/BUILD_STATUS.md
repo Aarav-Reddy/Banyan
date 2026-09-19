@@ -21,7 +21,7 @@ Native environment: macOS ARM64; PostgreSQL 17.11; project Python 3.12.4; Node 2
 | --- | --- |
 | `make doctor` | Passed; Docker absent, native PostgreSQL detected. |
 | `make setup` | Passed using frozen lockfiles and registry access; 68 Python packages checked, JavaScript lock unchanged. Initial sandbox DNS failure was not treated as success. No global conda modification. |
-| `make verify` | Passed, exit 0: **192 backend tests in 49.27 seconds, 13 component tests, 14 browser tests**, production build, checks and real-backend smoke. |
+| `make verify` | Passed, exit 0: **195 backend tests in 49.72 seconds, 14 component tests, 14 browser tests**; CI follow-up recorded below, production build, checks and real-backend smoke. |
 | `make check` (within verify) | Ruff lint/format, domain/parser mypy (14 files), Django system/migration drift, Prettier, strict TypeScript and generated OpenAPI/client drift passed. |
 | `make build` | Production Next build passed. |
 | Real-backend browser tests | Passed all fourteen cases across 1440px desktop and 390px mobile; main contexts block external destinations and use real local API responses. |
@@ -34,7 +34,7 @@ Native environment: macOS ARM64; PostgreSQL 17.11; project Python 3.12.4; Node 2
 
 ## Coverage and what it proves
 
-Backend coverage includes branch measurement: approximately **81.6% line coverage and 65.6% branch coverage** (combined pytest-cov display 78%). Allocation has **100% line and branch coverage**; pooling 97.4% lines / 95.2% branches; policy 80.4% / 71.9%; core transactional services 90.1% / 72.6%; worker 83.2% / 64.1%. These are observed module coverage, not claims of exhaustive security. API orchestration branches, operator CLI error variants, graph variants and rare worker recovery paths have lower coverage. Browser execution is separate and is not merged into Python coverage. See generated local `coverage.xml` for exact statement/branch counts: 3,780 / 4,631 lines and 940 / 1,432 branches.
+Backend coverage includes branch measurement: approximately **81.7% line coverage and 65.8% branch coverage** (combined pytest-cov display 78%). Allocation has **100% line and branch coverage**; pooling 97.4% lines / 95.2% branches; policy 80.4% / 71.9%; core transactional services 90.1% / 72.6%; worker 83.9% / 66.3%. These are observed module coverage, not claims of exhaustive security. API orchestration branches, operator CLI error variants, graph variants and rare worker recovery paths have lower coverage. Browser execution is separate and is not merged into Python coverage. See generated local `coverage.xml` for exact statement/branch counts: 3,783 / 4,633 lines and 943 / 1,434 branches.
 
 Tests use hand-checkable financial/pooling examples, Hypothesis allocation properties and real PostgreSQL concurrent transactions. Independent regressions verify queued edits, publication and workers waiting behind withdrawal locks, stale lease fencing, reviewer authority, private existence/count/citation/export isolation and identity invalidation. Default tests never call live external data/model services.
 
@@ -56,3 +56,7 @@ R01–R24 are mapped to implementation and executable checks in ACCEPTANCE_MATRI
 - Production requires dedicated clean storage, strong secrets, exact hosts/HTTPS origins, TLS, encrypted disks/backups, retention/withdrawal replay, configured delivery/monitoring, qualified independent reviewers and human pilot governance. Demo credentials/data must never be promoted.
 
 To resume development: read this checkpoint and AGENTS.md, fetch origin on aarav, keep isolated test databases, make a bounded change and rerun relevant gates. To run the pilot now: `make demo`; use the README's demo-only accounts. No work is promised to continue invisibly after handoff.
+
+## Post-push CI correction
+
+Functional commit 245ff90 was pushed successfully. Its clean Ubuntu workflow passed dependency audits, 192 backend tests, component checks and build, then exposed a queued-import delay behind repeated seed recommendation scans. The trace was inspected; the page remained queued, rather than failing import validation. The follow-up narrows a single-card recommendation event to that card with unchanged recipient consent checks, finishes real seed jobs before browser timing, and retains polling through processing. No timeout/assertion was relaxed. The follow-up `make verify` passed in full: 195 backend tests, 14 component tests, 14 browser journeys, checks/build and real-backend smoke. Three independent worker regressions also passed separately. The corrective commit containing this record is pushed after this gate; the next GitHub run determines its clean-run CI status.

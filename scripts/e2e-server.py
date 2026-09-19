@@ -145,6 +145,18 @@ def main():
                 "from philanthra.demo.seed import seed_demo; print(seed_demo())",
             ]
         )
+        # Process real seed events before timing interactive browser journeys.
+        # This runs the same leased worker and persists its actual outputs.
+        run([PY, "apps/api/manage.py", "worker", "--drain"])
+        run(
+            [
+                PY,
+                "apps/api/manage.py",
+                "shell",
+                "-c",
+                "from philanthra.core.models import Job; assert not Job.objects.exclude(state__in=['completed','canceled']).exists(), 'Seed jobs did not finish successfully'",
+            ]
+        )
         start(
             "api",
             [
