@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 export const metadata: Metadata = {
-  title: "Philanthra — Nonprofit research and shared evidence",
+  title: "Banyan — Nonprofit research and shared evidence",
   description:
     "Research nonprofit finances, plan funding, and learn from permissioned program evidence.",
 };

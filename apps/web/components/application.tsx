@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { BanyanLogo } from "./banyan-logo";
 import { useEffect, useState, useRef, createContext, useContext } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -139,12 +140,12 @@ export function Application({ path }: { path: string[] }) {
     return (
       <main className="boot">
         <a className="brand" href="/">
-          ◈ Philanthra
+          <BanyanLogo /> Banyan
         </a>
         {error ? (
           <Notice tone="error">Unable to connect to the API. {error}</Notice>
         ) : (
-          <p role="status">Opening Philanthra…</p>
+          <p role="status">Opening Banyan…</p>
         )}
       </main>
     );
@@ -160,7 +161,7 @@ export function Application({ path }: { path: string[] }) {
       <div className="public-shell">
         <header className="public-header">
           <Link className="brand" href="/">
-            ◈ Philanthra
+            <BanyanLogo /> Banyan
           </Link>
           <nav>
             <Link href="/methodology">Methodology</Link>
@@ -193,7 +194,7 @@ export function Application({ path }: { path: string[] }) {
           <Landing demo={!!session.demo_mode} />
         )}
         <footer className="public-footer">
-          Philanthra · Baltimore food security pilot{" "}
+          Banyan · Baltimore food security pilot{" "}
           <span>Financial context · Permissioned program evidence</span>
         </footer>
       </div>
@@ -379,7 +380,7 @@ export function Application({ path }: { path: string[] }) {
         >
           <div className="sidebar-brand">
             <Link className="brand" href={donor ? "/discover" : "/dashboard"}>
-              <span aria-hidden="true">◈</span> Philanthra
+              <BanyanLogo /> Banyan
             </Link>
             <button
               type="button"
@@ -551,10 +552,7 @@ function Landing({ demo }: { demo: boolean }) {
           </p>
         )}
       </section>
-      <section
-        className="audience-paths"
-        aria-label="Two ways to use Philanthra"
-      >
+      <section className="audience-paths" aria-label="Two ways to use Banyan">
         <article>
           <p className="eyebrow">For foundations</p>
           <h2>Investigate a funding decision</h2>
@@ -600,7 +598,7 @@ function Login({
     <main className="login-layout">
       <div>
         <p className="eyebrow">Baltimore food security pilot</p>
-        <h1>{join ? "Join a workspace" : "Sign in to Philanthra"}</h1>
+        <h1>{join ? "Join a workspace" : "Sign in to Banyan"}</h1>
         <p>
           {join
             ? "Use your invitation token to join the workspace that invited you."
@@ -680,7 +678,7 @@ function Login({
                   {["foundation-admin", "ngo-owner", "reviewer"].map((user) => (
                     <tr key={user}>
                       <td>{user}</td>
-                      <td>Demo-only-Philanthra-2026!</td>
+                      <td>Demo-only-Banyan-2026!</td>
                     </tr>
                   ))}
                 </tbody>
@@ -703,7 +701,7 @@ function Login({
                   onLogin(
                     await mutate<Session>("login/", "POST", {
                       username: user,
-                      password: "Demo-only-Philanthra-2026!",
+                      password: "Demo-only-Banyan-2026!",
                     }),
                   )
                 }

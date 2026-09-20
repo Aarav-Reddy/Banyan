@@ -1,4 +1,4 @@
-# Philanthra
+# Banyan
 
 A runnable, permissioned pilot for donor investigation and NGO learning, starting with Baltimore-area food security. It connects public financial records, contributor aggregates, intervention knowledge, source provenance and human review. Allocation and knowledge calculations are deterministic; no paid AI service is required.
 
@@ -15,11 +15,11 @@ make setup
 make demo
 ```
 
-Open **http://127.0.0.1:8080/demo**. On macOS, double-click **Start Philanthra Demo.command** after installing prerequisites. For the native macOS path, install PostgreSQL 17 with `brew install postgresql@17`; scripts discover its Homebrew path and keep the cluster inside `.runtime/pg`. No change to a global conda installation is needed. On Linux without Docker, install PostgreSQL 17 and set PG_BIN to its binary directory if not on PATH.
+Open **http://127.0.0.1:8080/demo**. On macOS, double-click **Start Banyan Demo.command** after installing prerequisites. For the native macOS path, install PostgreSQL 17 with `brew install postgresql@17`; scripts discover its Homebrew path and keep the cluster inside `.runtime/pg`. No change to a global conda installation is needed. On Linux without Docker, install PostgreSQL 17 and set PG_BIN to its binary directory if not on PATH.
 
 `make demo` chooses Compose when Docker is installed (its daemon must be running); otherwise it starts project-local PostgreSQL, migrates, idempotently seeds, starts API/web/worker and waits for readiness. Records persist across restarts. `make stop` stops tracked application processes without removing data. Native ports are 8080(web),8000(API),55432(database), all loopback; Compose exposes only the proxy port 8080. To apply local source changes to the built demo: `make stop`, `make build`, then `make demo`. Stop app services before `make dev` to switch to the development web server.
 
-Demo-only accounts share password **`Demo-only-Philanthra-2026!`**:
+Demo-only accounts share password **`Demo-only-Banyan-2026!`**:
 
 | Account | Workspace/role |
 | --- | --- |
@@ -73,4 +73,4 @@ The architecture is Next.js/React/strict TypeScript plus Django 5.2/DRF/PostgreS
 
 Production prerequisites include TLS/reverse-proxy configuration, explicit hosts/origins/strong secrets, a clean dedicated database, encrypted disks/backups, defined retention and withdrawal replay on restore, configured email, operational monitoring/rate limiting, qualified human reviewers and measured pilot governance. No billing, donation transfer, automatic grant application, blanket worldwide coverage, licensed Candid access, causal impact estimate or validated distress probability is represented as complete.
 
-See [architecture](docs/ARCHITECTURE.md), [data dictionary](docs/DATA_DICTIONARY.md), [API](docs/API.md), [methods](docs/METHODOLOGY.md), [privacy](docs/PRIVACY_AND_GOVERNANCE.md), [data sources](docs/DATA_SOURCES.md), [deployment](docs/DEPLOYMENT.md), [operations](docs/OPERATIONS.md) and [roadmap](docs/ROADMAP.md). The original Impact Commons proposal and original Git instructions are archived verbatim under [docs/source-materials](docs/source-materials/); Philanthra is the product name.
+See [architecture](docs/ARCHITECTURE.md), [data dictionary](docs/DATA_DICTIONARY.md), [API](docs/API.md), [methods](docs/METHODOLOGY.md), [privacy](docs/PRIVACY_AND_GOVERNANCE.md), [data sources](docs/DATA_SOURCES.md), [deployment](docs/DEPLOYMENT.md), [operations](docs/OPERATIONS.md) and [roadmap](docs/ROADMAP.md). The original Impact Commons proposal and original Git instructions are archived verbatim under [docs/source-materials](docs/source-materials/); Banyan is the product name.

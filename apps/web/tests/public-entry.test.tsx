@@ -55,7 +55,7 @@ describe("Public and demo entry preserve their original gates", () => {
       screen.queryByRole("table", { name: "Demo sign-in credentials" }),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByText("Demo-only-Philanthra-2026!"),
+      screen.queryByText("Demo-only-Banyan-2026!"),
     ).not.toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: "Forgot your password?" }),
@@ -96,7 +96,7 @@ describe("Public and demo entry preserve their original gates", () => {
       ].entries()) {
         expect(within(rows[index]).getByText(username)).toBeVisible();
         expect(
-          within(rows[index]).getByText("Demo-only-Philanthra-2026!"),
+          within(rows[index]).getByText("Demo-only-Banyan-2026!"),
         ).toBeVisible();
       }
       expect(screen.getByText(/This public demo is read-only/)).toBeVisible();

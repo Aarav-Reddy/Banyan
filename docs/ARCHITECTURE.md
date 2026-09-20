@@ -1,6 +1,6 @@
 # Architecture
 
-Philanthra is a permissioned, single-region pilot. Next.js App Router/React presents server-owned records through a same-origin Django REST API. PostgreSQL stores identities, memberships, aggregate observations, consent, revisions, review snapshots, jobs and audit events. Django sessions and CSRF protect browser actions. There is no frontend authentication database or browser token store.
+Banyan is a permissioned, single-region pilot. Next.js App Router/React presents server-owned records through a same-origin Django REST API. PostgreSQL stores identities, memberships, aggregate observations, consent, revisions, review snapshots, jobs and audit events. Django sessions and CSRF protect browser actions. There is no frontend authentication database or browser token store.
 
 ```mermaid
 flowchart LR

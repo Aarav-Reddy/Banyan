@@ -181,8 +181,8 @@ class PasswordResetRequestView(APIView):
             link = f"{public_origin}/password-reset?uid={uid}&token={token}"
             try:
                 send_mail(
-                    "Reset your Philanthra password",
-                    f"A password reset was requested for your Philanthra account.\n\nOpen {link}\n\nIf you did not request this, ignore this message. The link expires and becomes invalid after use.",
+                    "Reset your Banyan password",
+                    f"A password reset was requested for your Banyan account.\n\nOpen {link}\n\nIf you did not request this, ignore this message. The link expires and becomes invalid after use.",
                     settings.DEFAULT_FROM_EMAIL,
                     [user.email],
                     fail_silently=False,
@@ -338,7 +338,7 @@ class ImpactReportView(APIView):
                 )
             response = HttpResponse(safe_csv(rows), content_type="text/csv")
             response["Content-Disposition"] = (
-                'attachment; filename="philanthra-impact-report-draft.csv"'
+                'attachment; filename="banyan-impact-report-draft.csv"'
             )
             return response
         return ok(report)

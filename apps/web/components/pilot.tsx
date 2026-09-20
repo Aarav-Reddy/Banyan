@@ -707,7 +707,7 @@ export function ImpactReport() {
                   run={() =>
                     download(
                       "pilot/impact-report/?format=csv",
-                      "philanthra-impact-report-draft.csv",
+                      "banyan-impact-report-draft.csv",
                     )
                   }
                 >

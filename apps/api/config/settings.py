@@ -113,7 +113,7 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {"anon": "60/min", "user": "300/min"},
 }
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Philanthra Pilot API",
+    "TITLE": "Banyan Pilot API",
     "VERSION": "1.0.0",
     "DESCRIPTION": "Session-authenticated, permission-checked pilot API. Synthetic demo data is not real evidence.",
     "SERVE_INCLUDE_SCHEMA": False,

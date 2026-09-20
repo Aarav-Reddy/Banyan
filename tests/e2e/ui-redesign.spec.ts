@@ -36,7 +36,7 @@ async function login(page: Page, username: string) {
   await page.getByLabel("Username", { exact: true }).fill(username);
   await page
     .getByLabel("Password", { exact: true })
-    .fill("Demo-only-Philanthra-2026!");
+    .fill("Demo-only-Banyan-2026!");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await expect(page.getByRole("button", { name: "Sign out" })).toBeVisible();
 }

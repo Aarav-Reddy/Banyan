@@ -1349,7 +1349,7 @@ METRICS = {
     "insight_adoption": "Explicitly documented pilot adoptions / reviewed insights; owner report.",
     "data_quality_improvement": "Resolved validation issues / baseline issues; measured import feedback.",
     "cost_avoided": "Owner-reported implementation cost avoided; counterfactual unverified.",
-    "outcome_change": "Measured post-adoption change; no causal attribution to Philanthra.",
+    "outcome_change": "Measured post-adoption change; no causal attribution to Banyan.",
     "continuing_contributors": "Consenting contributors active in both periods / prior period contributors.",
 }
 
@@ -1390,7 +1390,7 @@ class MetricsView(APIView):
             ]
             audit(ws, request.user, "metrics.exported", ws.id)
             response = HttpResponse(safe_csv(rows, columns), content_type="text/csv")
-            response["Content-Disposition"] = 'attachment; filename="philanthra-pilot-metrics.csv"'
+            response["Content-Disposition"] = 'attachment; filename="banyan-pilot-metrics.csv"'
             return response
         return ok(
             {
@@ -1524,7 +1524,7 @@ class ReportView(APIView):
             for row in rows:
                 row["required_attribution"] = attribution
             response = HttpResponse(safe_csv(rows), content_type="text/csv")
-            response["Content-Disposition"] = 'attachment; filename="philanthra-report.csv"'
+            response["Content-Disposition"] = 'attachment; filename="banyan-report.csv"'
             return response
         return ok(
             s.PortfolioSerializer(artifact, context={"workspace": ws}).data
@@ -1572,5 +1572,5 @@ class ImportTemplateView(APIView):
         else:
             raise ValidationError({"kind": "Choose outcome or cost."})
         response = HttpResponse(safe_csv([], fields), content_type="text/csv")
-        response["Content-Disposition"] = f'attachment; filename="philanthra-{kind}-template.csv"'
+        response["Content-Disposition"] = f'attachment; filename="banyan-{kind}-template.csv"'
         return response

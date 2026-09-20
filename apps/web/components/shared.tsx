@@ -1051,7 +1051,7 @@ export function Metrics() {
         action={
           <Action
             run={() =>
-              download("metrics/?format=csv", "philanthra-pilot-metrics.csv")
+              download("metrics/?format=csv", "banyan-pilot-metrics.csv")
             }
           >
             Export pilot metrics CSV
@@ -1241,7 +1241,7 @@ export function Report({ id }: { id: string }) {
       {data && (
         <article className="report-document">
           <Header
-            eyebrow="Philanthra / Source-linked report"
+            eyebrow="Banyan / Source-linked report"
             title={data.title}
             action={
               <div className="actions no-print">
@@ -1347,7 +1347,7 @@ export function Methodology() {
   return (
     <>
       <Header eyebrow="Methods & limitations" title="Methods and limitations">
-        Philanthra helps people investigate and learn. Every calculation has
+        Banyan helps people investigate and learn. Every calculation has
         boundaries; every consequential recommendation needs human review.
       </Header>
       <div className="reading-column">

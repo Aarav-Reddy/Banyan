@@ -1,4 +1,4 @@
-# Running Philanthra
+# Running Banyan
 
 This repository provides a local pilot, not a certified production deployment. The demo contains fictional organizations, studies and credentials. Keep it bound to loopback.
 
@@ -12,7 +12,7 @@ make doctor
 make demo
 ```
 
-Open <http://127.0.0.1:8080>. Demo users include `foundation-admin`, `ngo-owner` and `reviewer`; their shared demo-only password is `Demo-only-Philanthra-2026!`. `Start Philanthra Demo.command` runs the same command on macOS and supports paths containing spaces. Use `make stop` to stop app services. Re-running startup migrates and seeds idempotently; it never flushes saved work.
+Open <http://127.0.0.1:8080>. Demo users include `foundation-admin`, `ngo-owner` and `reviewer`; their shared demo-only password is `Demo-only-Banyan-2026!`. `Start Banyan Demo.command` runs the same command on macOS and supports paths containing spaces. Use `make stop` to stop app services. Re-running startup migrates and seeds idempotently; it never flushes saved work.
 
 ## Canonical Compose environment
 

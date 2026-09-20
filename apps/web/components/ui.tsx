@@ -526,7 +526,7 @@ export function ReviewSubmit({
 export function ExportButton({ id }: { id: string }) {
   return (
     <Action
-      run={() => download(`reports/${id}/?format=csv`, "philanthra-report.csv")}
+      run={() => download(`reports/${id}/?format=csv`, "banyan-report.csv")}
     >
       Export CSV ↓
     </Action>

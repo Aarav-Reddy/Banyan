@@ -10,7 +10,7 @@ with httpx.Client(base_url=url, timeout=20) as client:
     token = session["csrfToken"]
     result = client.post(
         "/api/v1/login/",
-        json={"username": "foundation-admin", "password": "Demo-only-Philanthra-2026!"},
+        json={"username": "foundation-admin", "password": "Demo-only-Banyan-2026!"},
         headers={"X-CSRFToken": token, "Origin": url},
     )
     assert result.status_code == 200, result.text

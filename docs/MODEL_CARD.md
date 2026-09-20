@@ -1,4 +1,4 @@
-# Philanthra rules engine and experimental evaluation
+# Banyan rules engine and experimental evaluation
 
 ## Intended use
 

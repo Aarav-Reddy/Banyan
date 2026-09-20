@@ -3695,7 +3695,7 @@
   },
   "info": {
     "description": "Session-authenticated, permission-checked pilot API. Synthetic demo data is not real evidence.",
-    "title": "Philanthra Pilot API",
+    "title": "Banyan Pilot API",
     "version": "1.0.0"
   },
   "openapi": "3.0.3",

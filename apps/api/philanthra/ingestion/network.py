@@ -71,7 +71,7 @@ def fetch_source(source_id: str, *, enabled: bool = False) -> bytes:
         connection.request(
             "GET",
             parsed.path + ("?" + parsed.query if parsed.query else ""),
-            headers={"Accept-Encoding": "identity", "User-Agent": "Philanthra-pilot/0.1"},
+            headers={"Accept-Encoding": "identity", "User-Agent": "Banyan-pilot/0.1"},
         )
         response = connection.getresponse()
         if 300 <= response.status < 400:

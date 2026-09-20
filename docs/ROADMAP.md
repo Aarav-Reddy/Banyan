@@ -1,6 +1,6 @@
 # Product direction and expansion boundaries
 
-The original Impact Commons proposal is preserved verbatim in source-materials/ORIGINAL_PROPOSAL.md. Philanthra is the repository/product name. The Baltimore food-security pilot links donor investigation with useful learning returned to NGO contributors. It does not certify an optimal global allocation of philanthropy.
+The original Impact Commons proposal is preserved verbatim in source-materials/ORIGINAL_PROPOSAL.md. Banyan is the product name. The Baltimore food-security pilot links donor investigation with useful learning returned to NGO contributors. It does not certify an optimal global allocation of philanthropy.
 
 The commercial direction remains institutional subscriptions for foundations, free or subsidized NGO contributions, sponsored preparation/onboarding, portfolio monitoring, licensed integrations, authenticated API access, custom analyses and eventual white-label services. Funding the platform never purchases ranking position; no payments or percentage-of-donations workflow is implemented.
 

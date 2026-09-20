@@ -20,7 +20,7 @@ def enqueue_periodic_monitoring():
 
 
 class Command(BaseCommand):
-    help = "Process leased Philanthra jobs; --once claims at most one item."
+    help = "Process leased Banyan jobs; --once claims at most one item."
 
     def add_arguments(self, parser):
         parser.add_argument("--once", action="store_true")

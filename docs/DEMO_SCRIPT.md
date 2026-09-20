@@ -1,6 +1,6 @@
 # Demonstration script
 
-Run `make demo`, open http://127.0.0.1:8080/demo. Demo-only password for the listed accounts: `Demo-only-Philanthra-2026!`. Demo role buttons are served only in demo mode. The fixed fixture clock is 2026-09-01; public source retrieval dates remain actual retrieval dates. No money is moved and no outbound message is sent.
+Run `make demo`, open http://127.0.0.1:8080/demo. Demo-only password for the listed accounts: `Demo-only-Banyan-2026!`. Demo role buttons are served only in demo mode. The fixed fixture clock is 2026-09-01; public source retrieval dates remain actual retrieval dates. No money is moved and no outbound message is sent.
 
 ## Donor journey
 

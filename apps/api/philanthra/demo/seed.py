@@ -18,7 +18,7 @@ from philanthra.core.services import (
 )
 
 CLOCK = datetime(2026, 9, 1, 12, tzinfo=UTC)
-PASSWORD = "Demo-only-Philanthra-2026!"
+PASSWORD = "Demo-only-Banyan-2026!"
 SEED_VERSION = "baltimore-food-v1"
 
 
@@ -49,7 +49,7 @@ def grant(src, purpose, recipient=None, audience="public"):
         audience=audience,
         cause=src.cause,
         geography=src.geography,
-        attribution="Fictional Philanthra demonstration; no real organizations or studies.",
+        attribution="Fictional Banyan demonstration; no real organizations or studies.",
     )
 
 

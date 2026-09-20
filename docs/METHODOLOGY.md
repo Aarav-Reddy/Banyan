@@ -1,4 +1,4 @@
-# Philanthra methodology
+# Banyan methodology
 
 All methods below are deterministic, versioned planning or descriptive calculations. They do not measure causal impact, predict organizational collapse, or move money. Input source IDs travel with available results. The API must authorize input records before calling these pure functions and retain source/grant revisions in persisted artifacts. A calculation result never confers permission to publish.
 

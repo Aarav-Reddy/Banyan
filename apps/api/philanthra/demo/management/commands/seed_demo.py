@@ -5,7 +5,7 @@ from philanthra.demo.seed import seed_demo
 
 
 class Command(BaseCommand):
-    help = "Idempotently seed the explicitly named Philanthra demo database."
+    help = "Idempotently seed the explicitly named Banyan demo database."
 
     def handle(self, *args, **options):
         name = settings.DATABASES["default"]["NAME"]

@@ -175,9 +175,9 @@ def main():
         )
         wait_ready("http://127.0.0.1:8080/api/ready/")
         wait_ready("http://127.0.0.1:8080/")
-    print("\nPhilanthra demo ready: http://127.0.0.1:8080")
+    print("\nBanyan demo ready: http://127.0.0.1:8080")
     print("Demo-only users: foundation-admin, ngo-owner, reviewer")
-    print("Demo-only password: Demo-only-Philanthra-2026!")
+    print("Demo-only password: Demo-only-Banyan-2026!")
     print("Records persist across restarts. Stop: make stop. All seeded content is fictional.")
 
 
