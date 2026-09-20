@@ -3221,6 +3221,9 @@
           "demo_mode": {
             "type": "boolean"
           },
+          "demo_read_only": {
+            "type": "boolean"
+          },
           "user": {
             "allOf": [
               {

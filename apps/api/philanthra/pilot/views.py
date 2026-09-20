@@ -364,7 +364,12 @@ def profile_data(profile):
 class ProfileView(APIView):
     def get(self, request):
         workspace = workspace_for(request)
-        profile, _ = WorkspaceProfile.objects.get_or_create(owner=workspace)
+        if settings.DEMO_MODE and settings.DEMO_READ_ONLY:
+            profile = WorkspaceProfile.objects.filter(owner=workspace).first() or WorkspaceProfile(
+                owner=workspace
+            )
+        else:
+            profile, _ = WorkspaceProfile.objects.get_or_create(owner=workspace)
         return ok(profile_data(profile))
 
     @transaction.atomic

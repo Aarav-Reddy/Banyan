@@ -30,6 +30,12 @@ Install PostgreSQL 17 with your platform package manager, then run the same comm
 
 `make dev` starts the Next development server and the same backend/worker. Stop app services before switching between `demo` and `dev`. After source changes run `make build` followed by `make stop && make demo` to refresh a production web build; startup preserves an existing build. Local setup does not automatically load `.env` files; export needed overrides explicitly. `.env.example` documents sanitized names/defaults.
 
+## Public read-only demo
+
+For a deliberately public synthetic demo, run the API in `PHILANTHRA_ENV=demo` with `PHILANTHRA_DEMO_READ_ONLY=1`. Verify `/api/v1/session/` reports `demo_read_only: true` before removing any outer access gate. This blocks visitor mutations for every account, including the shared administrator/reviewer roles, while allowing login/logout, browsing and authorized exports. Password resets, invitations, uploads, edits and approvals are blocked. Session bookkeeping and access audits remain; this mode does not stop existing background jobs. Demo sign-in pages list the three shared demo credentials; they are never displayed outside demo mode.
+
+The existing Banyan deployment uses the unchanged Sites proxy and ngrok endpoint, with private HTTPS/hostname settings in `.runtime/philanthra_tunnel_settings.py`. On that host, stop app processes, build the updated frontend, then run `python3 .runtime/start-public-demo.py` to preserve the tunnel settings and read-only mode without reseeding. That ignored helper and the private settings are host configuration, not repository assets. Do not replace this startup with plain `make demo` while the public tunnel is open: ordinary local demo mode remains editable and uses different settings. Keep the Mac, app processes and ngrok running. Public read-only demo access does not satisfy the production prerequisites below.
+
 ## Release gate and CI
 
 `make verify` runs Ruff lint/format, Python type checks, Django system/migration drift checks, TypeScript checks, generated OpenAPI/client drift, backend tests with coverage, web component tests, production build, browser journeys, and a real-backend smoke test. `make restore-test` separately creates a coherent PostgreSQL snapshot and proves a scratch restore matches all table rows. `make audit` calls external dependency advisory services and fails on vulnerabilities or unavailable services; it is intentionally separate from offline verification.

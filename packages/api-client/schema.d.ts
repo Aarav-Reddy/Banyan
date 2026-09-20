@@ -2189,6 +2189,7 @@ export interface components {
         SessionData: {
             csrfToken: string;
             demo_mode: boolean;
+            demo_read_only?: boolean;
             user: components["schemas"]["CurrentUser"] | null;
             workspaces: components["schemas"]["SessionWorkspace"][];
         };

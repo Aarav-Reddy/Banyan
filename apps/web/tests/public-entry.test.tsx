@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { Application } from "../components/application";
 
 vi.mock("next/navigation", () => ({
@@ -7,7 +7,7 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 afterEach(() => vi.unstubAllGlobals());
-function session(demo: boolean) {
+function session(demo: boolean, readOnly = false) {
   vi.stubGlobal(
     "fetch",
     vi.fn().mockResolvedValue({
@@ -17,6 +17,7 @@ function session(demo: boolean) {
           user: null,
           workspaces: [],
           demo_mode: demo,
+          demo_read_only: readOnly,
           csrfToken: "synthetic-csrf",
         },
       }),
@@ -51,6 +52,12 @@ describe("Public and demo entry preserve their original gates", () => {
       screen.queryByText("Explore with a demo role"),
     ).not.toBeInTheDocument();
     expect(
+      screen.queryByRole("table", { name: "Demo sign-in credentials" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Demo-only-Philanthra-2026!"),
+    ).not.toBeInTheDocument();
+    expect(
       screen.getByRole("link", { name: "Forgot your password?" }),
     ).toHaveAttribute("href", "/password-reset");
   });
@@ -68,5 +75,31 @@ describe("Public and demo entry preserve their original gates", () => {
     expect(
       screen.queryByText("Explore with a demo role"),
     ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("table", { name: "Demo sign-in credentials" }),
+    ).not.toBeInTheDocument();
   });
+  it.each(["login", "demo"])(
+    "shows all three credentials and the read-only boundary on /%s",
+    async (path) => {
+      session(true, true);
+      render(<Application path={[path]} />);
+      const table = await screen.findByRole("table", {
+        name: "Demo sign-in credentials",
+      });
+      const rows = within(table).getAllByRole("row").slice(1);
+      expect(rows).toHaveLength(3);
+      for (const [index, username] of [
+        "foundation-admin",
+        "ngo-owner",
+        "reviewer",
+      ].entries()) {
+        expect(within(rows[index]).getByText(username)).toBeVisible();
+        expect(
+          within(rows[index]).getByText("Demo-only-Philanthra-2026!"),
+        ).toBeVisible();
+      }
+      expect(screen.getByText(/This public demo is read-only/)).toBeVisible();
+    },
+  );
 });

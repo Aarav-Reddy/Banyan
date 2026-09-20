@@ -181,6 +181,7 @@ export function Application({ path }: { path: string[] }) {
           (!session.user && page && page !== "methodology") ? (
           <Login
             demo={!!session.demo_mode}
+            readOnly={!!session.demo_read_only}
             onLogin={signedIn}
             join={page === "join"}
           />
@@ -496,9 +497,13 @@ export function Application({ path }: { path: string[] }) {
           </header>
           {session.demo_mode && (
             <div className="demo-banner">
-              <strong>Demo environment.</strong> Fictional nonprofit
-              organizations and synthetic program evidence. Public context is
-              labeled separately. No money is moved.
+              <strong>
+                {session.demo_read_only
+                  ? "Read-only demo."
+                  : "Demo environment."}
+              </strong>{" "}
+              Fictional nonprofit organizations and synthetic program evidence.
+              Public context is labeled separately. No money is moved.
             </div>
           )}
           {error && <Notice tone="error">{error}</Notice>}
@@ -582,10 +587,12 @@ function Landing({ demo }: { demo: boolean }) {
 }
 function Login({
   demo,
+  readOnly,
   onLogin,
   join,
 }: {
   demo: boolean;
+  readOnly: boolean;
   onLogin: (s: Session) => void;
   join: boolean;
 }) {
@@ -654,6 +661,31 @@ function Login({
         )}
         {demo && !join && (
           <div className="demo-roles">
+            <h3>Demo sign-in credentials</h3>
+            {readOnly && (
+              <p className="fine">
+                This public demo is read-only. You can browse with any role;
+                changes, uploads, and approvals are disabled.
+              </p>
+            )}
+            <div className="table-wrap">
+              <table aria-label="Demo sign-in credentials">
+                <thead>
+                  <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Password</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {["foundation-admin", "ngo-owner", "reviewer"].map((user) => (
+                    <tr key={user}>
+                      <td>{user}</td>
+                      <td>Demo-only-Philanthra-2026!</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             <h3>Explore with a demo role</h3>
             <p className="fine">Choose a role to try the existing workflows.</p>
             {[

@@ -40,6 +40,7 @@ def session_data(request):
         else [],
         "csrfToken": get_token(request),
         "demo_mode": settings.DEMO_MODE,
+        "demo_read_only": settings.DEMO_MODE and settings.DEMO_READ_ONLY,
     }
 
 

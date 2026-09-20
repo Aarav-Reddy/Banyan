@@ -9,6 +9,7 @@ from django.core.exceptions import ImproperlyConfigured
 BASE_DIR = Path(__file__).resolve().parents[3]
 ENVIRONMENT = os.getenv("PHILANTHRA_ENV", "development")
 DEMO_MODE = ENVIRONMENT == "demo"
+DEMO_READ_ONLY = DEMO_MODE and os.getenv("PHILANTHRA_DEMO_READ_ONLY", "0") == "1"
 DEBUG = os.getenv("DEBUG", "0") == "1"
 SECRET_KEY = os.getenv("SECRET_KEY", "local-development-only-change-before-deployment")
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,api,testserver").split(",")
@@ -52,6 +53,7 @@ MIDDLEWARE = [
     "config.middleware.RequestMetadataMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "config.middleware.DemoReadOnlyMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",

@@ -1,6 +1,7 @@
 import hashlib
 import json
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.search import SearchQuery, SearchVector
 from django.db import transaction
@@ -962,7 +963,13 @@ class AlertDetailView(APIView):
 
 class SubscriptionsView(APIView):
     def get(self, request):
-        item, _ = m.Subscription.objects.get_or_create(owner=workspace_for(request))
+        workspace = workspace_for(request)
+        if settings.DEMO_MODE and settings.DEMO_READ_ONLY:
+            item = m.Subscription.objects.filter(owner=workspace).first() or m.Subscription(
+                owner=workspace
+            )
+        else:
+            item, _ = m.Subscription.objects.get_or_create(owner=workspace)
         return ok({k: getattr(item, k) for k in ["evidence", "financial", "stale"]})
 
     def patch(self, request):

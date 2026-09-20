@@ -198,6 +198,7 @@ def apply_schema():
             ),
             "csrfToken": text(),
             "demo_mode": serializers.BooleanField(),
+            "demo_read_only": serializers.BooleanField(required=False),
         },
     )
     organization_detail = inline_serializer(

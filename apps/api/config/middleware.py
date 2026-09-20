@@ -1,7 +1,37 @@
 import logging
 import uuid
 
+from django.conf import settings
 from django.http import JsonResponse
+from django.utils.deprecation import MiddlewareMixin
+
+
+class DemoReadOnlyMiddleware(MiddlewareMixin):
+    """Deny visitor mutations before dispatch; sessions retain their CSRF checks."""
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        if not (settings.DEMO_MODE and settings.DEMO_READ_ONLY):
+            return None
+        if request.method in {"GET", "HEAD", "OPTIONS"}:
+            return None
+
+        from philanthra.accounts.views import LoginView, LogoutView
+
+        if request.method == "POST" and getattr(view_func, "view_class", None) in {
+            LoginView,
+            LogoutView,
+        }:
+            return None
+        return JsonResponse(
+            {
+                "error": {
+                    "code": "demo_read_only",
+                    "message": "This public demo is read-only. Changes are disabled.",
+                    "fields": {},
+                }
+            },
+            status=403,
+        )
 
 
 def csrf_failure(request, reason=""):
