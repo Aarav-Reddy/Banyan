@@ -1,5 +1,7 @@
 # Pilot acceptance matrix
 
+Website-only migration (2026-10-14): implemented and deployed as Sites version 4. The user selected a synthetic website demonstration without accounts or shared persistence. Implementation: Sites `public/demo/`, `worker/index.js`, and `scripts/build.mjs`. Checks: Sites routing/content tests, `tests/demo-data.test.mjs`, and desktop/mobile browser verification. All 27 Sites tests passed. `node scripts/verify-website-demo.cjs` passed at 1440px and 390px with no external/backend requests or axe violations. Publication and full results are recorded in `BUILD_STATUS.md`. The full application's existing acceptance entries below do not imply those backend features are present in this website demo.
+
 This matrix maps implemented pilot behavior to executable evidence. “Implemented” describes repository functionality, not real expert review, scientific validation, operational certification, or worldwide coverage. Final integrated execution and remaining environment limitations are recorded in [BUILD_STATUS.md](BUILD_STATUS.md). Browser cases use a real isolated PostgreSQL database, API and worker; no successful API responses are mocked.
 
 Paths below are relative to the repository. `core`, `pilot`, `analytics`, `ingestion`, `catalog`, `accounts`, `jobs`, `demo`, and `explanations` refer to `apps/api/philanthra/`. UI components are in `apps/web/components/`.

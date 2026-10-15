@@ -4,6 +4,10 @@ A runnable, permissioned pilot for donor investigation and NGO learning, startin
 
 **Demo organizations, grants and studies are fictional.** The small Census city-context extract is separately labeled public data. Planning drafts are not completed grants, review by demo accounts is not expert validation, and this repository does not establish real-world effectiveness or global coverage.
 
+## Website demonstration
+
+The website-only demo is live at [banyan.aaravreddy.org/demo](https://banyan.aaravreddy.org/demo). See `docs/BUILD_STATUS.md` for publication status. It supports organization search, comparison, evidence inspection, and nonprofit program views with synthetic fixtures. It has no accounts, uploads, shared saving, or approval actions. Selections reset on reload. Its Sites bundle requires no ngrok tunnel or running local application. The full application and its local launch instructions remain below.
+
 ## Launch
 
 Prerequisites: Git, Python 3.12 or 3.13, Node 24, and either Docker with Compose or PostgreSQL 17 client/server tools. Initial dependency installation needs internet; the prepared demo and deterministic tests use no live external API. The observed development machine used macOS/Node 24.14.0/Python 3.12.4/PostgreSQL 17.11. Linux and macOS terminal paths are supported; Compose is prepared but was not run here because Docker was unavailable.
